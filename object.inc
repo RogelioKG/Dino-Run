@@ -1,99 +1,115 @@
 TITLE object.inc
 OPTION casemap:none
 
-; µ²ºcªº©w¸q¡Gª½±µ©ñ¤J§Y¥i
 
-; ª«Åé²°
+; çµæ§‹çš„å®šç¾©ï¼šç›´æ¥æ”¾å…¥å³å¯
+
+; 4 Bytes COORD
+; (2 Bytes å­˜å–ç¶“å¸¸ç™¼ç”Ÿå•é¡Œ)
+PAIRS STRUCT
+    X DWORD ?
+    Y DWORD ?
+PAIRS ENDS
+
+; ç‰©é«”ç›’
 Box STRUCT
-    contents_ptr    DWORD   ?   ; (4 Bytes) ¤º®eª«¦r¦êªº«ü¼Ğ (BYTE PTR)
-    attr_ptr        DWORD   ?   ; (4 Bytes) ¤º®eª«Äİ©Êªº«ü¼Ğ (WORD PTR)
-    pos             COORD   <>  ; (4 Bytes) ¥ª¤W¨¤¦ì¸m
-    xdim            DWORD   ?   ; (4 Bytes) ¼e«×
-    ydim            DWORD   ?   ; (4 Bytes) °ª«×
-Box ENDS                        ; (20 Bytes)
+    contents_ptr    DWORD   ?   ; (4 Bytes) å…§å®¹ç‰©å­—ä¸²çš„æŒ‡æ¨™ (BYTE PTR)
+    attr_ptr        DWORD   ?   ; (4 Bytes) å…§å®¹ç‰©é¡è‰²çš„æŒ‡æ¨™ (WORD PTR)
+    dim             PAIRS   <>  ; (8 Bytes) é«˜åº¦
+    pos             PAIRS   <>  ; (8 Bytes) å·¦ä¸‹è§’åº§æ¨™
+Box ENDS                        ; (24 Bytes)
 
-; ¯«©_¤p®Ø
-RectBuddy STRUCT
-    box             Box     <>  ; (20 Bytes) ª«Åé²°
+; ä¸€èˆ¬ç‰©é«”
+Object STRUCT
+    box             Box     <>  ; (24 Bytes) ç‰©é«”ç›’
     status          DWORD   ?   ; (4 Bytes)  NotImplemented
-RectBuddy ENDS
+Object ENDS
 
-; ¤p®£Às
-Dino STRUCT
-    box             Box     <>  ; (20 Bytes) ª«Åé²°
+; è§’è‰²
+Character STRUCT
+    box             Box     <>  ; (24 Bytes) ç‰©é«”ç›’
     status          DWORD   ?   ; (4 Bytes)  NotImplemented
-Dino ENDS
+Character ENDS
 
 
-; ÅÜ¼Æªº¥~³¡©w¸q¡G¨Ï¥Î EXTERNDEF ÃöÁä¦r
+; è®Šæ•¸çš„å¤–éƒ¨å®šç¾©ï¼šä½¿ç”¨ EXTERNDEF é—œéµå­—
 
-; ¯«©_¤p®Ø
+; å°æé¾
 ; ****************************************
-; ¤Ø¤o
-EXTERNDEF recto_xdim            :ABS
-EXTERNDEF recto_ydim            :ABS
-; ----------------------------------------
-; ¨¤¦â: ¯«©_¤pÂÅ®Ø
-EXTERNDEF recto_blue            :RectBuddy
-EXTERNDEF recto_attribute_blue  :WORD
-; ----------------------------------------
-; ¨¤¦â: ¯«©_¤p¬õ®Ø
-EXTERNDEF recto_red             :RectBuddy
-EXTERNDEF recto_attribute_red   :WORD
-; ----------------------------------------
-; ¤º®eª«
-EXTERNDEF recto_contents        :BYTE
-; ****************************************
-
-; ¤p®£Às
-; ****************************************
-; ¤Ø¤o
+; å°ºå¯¸
 EXTERNDEF dino_xdim             :ABS
 EXTERNDEF dino_ydim             :ABS
 ; ----------------------------------------
-; ¨¤¦â: ºñ¦â¤p®£Às
-EXTERNDEF dino_green            :RectBuddy
+; è§’è‰²: ç¶ è‰²å°æé¾
+EXTERNDEF dino_green            :Character
 EXTERNDEF dino_attribute_green  :WORD
 ; ----------------------------------------
-; ¤º®eª«
+; å…§å®¹ç‰©
 EXTERNDEF dino_contents         :BYTE
 ; ****************************************
 
+; ç¥å¥‡å°æ¡†
+; ****************************************
+; å°ºå¯¸
+EXTERNDEF recto_xdim            :ABS
+EXTERNDEF recto_ydim            :ABS
+; ----------------------------------------
+; è§’è‰²: ç¥å¥‡å°è—æ¡†
+EXTERNDEF recto_blue            :Object
+EXTERNDEF recto_attribute_blue  :WORD
+; ----------------------------------------
+; è§’è‰²: ç¥å¥‡å°ç´…æ¡†
+EXTERNDEF recto_red             :Object
+EXTERNDEF recto_attribute_red   :WORD
+; ----------------------------------------
+; å…§å®¹ç‰©
+EXTERNDEF recto_contents        :BYTE
+; ****************************************
 
-; ¤lµ{§Çªº¥~³¡©w¸q¡G«Å§i PROTO §Y¥i
+; ä»™äººæŒ
+; ****************************************
+; å°ºå¯¸
+EXTERNDEF cactus_xdim           :ABS
+EXTERNDEF cactus_ydim           :ABS
+; ----------------------------------------
+; è§’è‰²: ç¶ è‰²ä»™äººæŒ
+EXTERNDEF cactus_green          :Object
+EXTERNDEF cactus_attribute_green:WORD
+; ----------------------------------------
+; å…§å®¹ç‰©
+EXTERNDEF cactus_contents       :BYTE
+; ****************************************
+
+
+; å­ç¨‹åºçš„å¤–éƒ¨å®šç¾©ï¼šå®£å‘Š PROTO å³å¯
 ; ...
 
 
-; ¥¨¶°ªº©w¸q¡Gª½±µ©ñ¤J§Y¥i
+; å·¨é›†çš„å®šç¾©ï¼šç›´æ¥æ”¾å…¥å³å¯
 mRectoBlueInit MACRO x:REQ, y:REQ
     .code
-    mov recto_blue.box.contents_ptr, OFFSET recto_contents
-    mov recto_blue.box.attr_ptr, OFFSET recto_attribute_blue
     mov recto_blue.box.pos.X, x
     mov recto_blue.box.pos.Y, y
-    mov recto_blue.box.xdim, recto_xdim 
-    mov recto_blue.box.ydim, recto_ydim
     mov recto_blue.status, 0
 ENDM
 
 mRectoRedInit MACRO x:REQ, y:REQ
     .code
-    mov recto_red.box.contents_ptr, OFFSET recto_contents
-    mov recto_red.box.attr_ptr, OFFSET recto_attribute_red
     mov recto_red.box.pos.X, x
     mov recto_red.box.pos.Y, y
-    mov recto_red.box.xdim, recto_xdim 
-    mov recto_red.box.ydim, recto_ydim
     mov recto_red.status, 0
 ENDM
 
 mDinoGreenInit MACRO x:REQ, y:REQ
     .code
-    mov dino_green.box.contents_ptr, OFFSET dino_contents
-    mov dino_green.box.attr_ptr, OFFSET dino_attribute_green
     mov dino_green.box.pos.X, x
     mov dino_green.box.pos.Y, y
-    mov dino_green.box.xdim, dino_xdim 
-    mov dino_green.box.ydim, dino_ydim
     mov dino_green.status, 0
+ENDM
+
+mCactusGreenInit MACRO x:REQ, y:REQ
+    .code
+    mov cactus_green.box.pos.X, x
+    mov cactus_green.box.pos.Y, y
+    mov cactus_green.status, 0
 ENDM

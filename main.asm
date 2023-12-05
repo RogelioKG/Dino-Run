@@ -11,8 +11,6 @@ INCLUDE draw.inc
 
 .data
 ground      WORD    ?
-last_key    WORD    ?
-
 
 .code
 main PROC
@@ -23,63 +21,54 @@ main PROC
         INVOKE Sleep, 500
         call Clrscr
         mov ax, 0
-        call GetMaxXY   ; dx = cols (x:width), ax = rows (y:height)
+        call GetMaxXY               ; dx = cols, ax = rows
         call WriteInt
     .until (ax > 80)
 
-    mov ground, ax
+    sub ax, 1
+    mov ground, ax                  ; åœ°æ¿åº§æ¨™ (94 cols -> y = 93)
 
-    mDinoGreenInit  0, 0
-    mRectoRedInit   240, 80
-    mRectoBlueInit  120, 80
+    mDinoGreenInit    20, 93
+    mCactusGreenInit 240, 93
+    mRectoRedInit    120, 93
+    mRectoBlueInit    60, 93
 
     call Clrscr
+    INVOKE DrawBox, dino_green.box
+    INVOKE DrawBox, cactus_green.box
     INVOKE DrawBox, recto_blue.box
     INVOKE DrawBox, recto_red.box
-    INVOKE DrawBox, dino_green.box
 
 look_for_key:
-    mov  eax, 40                ; sleep¡AÅý OS ¶i¦æ time slicing
-    call Delay                  ; 
-    call ReadKey                ; Åª¨úÁä½L¿é¤J
-    jz no_key                   ; ¨S¦³¥ô¦óÁä½L¿é¤J
+    mov  eax, 40                    ; sleepï¼Œè®“ OS æœ‰æ™‚é–“åš time slicing
+    call Delay                      ; 
+    call ReadKey                    ; è®€å–è¼¸å…¥éµ
+    jz no_key                       ; å¦‚æžœæ²’æœ‰è¼¸å…¥éµ
 got_key:
     .if (dx == VK_LEFT)
-        sub dino_green.box.pos.X, 1
+        sub dino_green.box.pos.X, 2
     .elseif (dx == VK_RIGHT)
-        add dino_green.box.pos.X, 1
+        add dino_green.box.pos.X, 2
     .elseif (dx == VK_SPACE)
         sub dino_green.box.pos.Y, 2
     .else
         jmp look_for_key
     .endif
-    .if (dx == VK_LEFT)
-        sub dino_green.box.pos.X, 1
-    .elseif (dx == VK_RIGHT)
-        add dino_green.box.pos.X, 1
-    .elseif (dx == VK_SPACE)
-        sub dino_green.box.pos.Y, 2
-    .else
-        jmp look_for_key
-    .endif
-    mov last_key, dx
     jmp draw
 no_key:
-    call GetMaxXY
-    mov ebx, 0
-    movzx ebx, dino_green.box.pos.Y
-    add ebx, dino_green.box.ydim
-    .if (bx >= ax)
+    mov ebx, dino_green.box.pos.Y
+    .if (bx >= ground)
         jmp look_for_key
     .else
-        add dino_green.box.pos.Y, 1
+        add dino_green.box.pos.Y, 2
         jmp draw
     .endif
 draw:
     call Clrscr
+    INVOKE DrawBox, dino_green.box
+    INVOKE DrawBox, cactus_green.box
     INVOKE DrawBox, recto_blue.box
     INVOKE DrawBox, recto_red.box
-    INVOKE DrawBox, dino_green.box
     jmp look_for_key
 
     exit

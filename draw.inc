@@ -1,25 +1,25 @@
 TITLE draw.inc
 OPTION casemap:none
 
-; µ²ºcªº©w¸q¡Gª½±µ©ñ¤J§Y¥i
+; çµæ§‹çš„å®šç¾©ï¼šç›´æ¥æ”¾å…¥å³å¯
 ; ...
 
 
-; ÅÜ¼Æªº¥~³¡©w¸q¡G¨Ï¥Î EXTERNDEF ÃöÁä¦r
-EXTERNDEF output_handle :HANDLE
-EXTERNDEF info          :CONSOLE_CURSOR_INFO
+; è®Šæ•¸çš„å¤–éƒ¨å®šç¾©ï¼šä½¿ç”¨ EXTERNDEF é—œéµå­—
+EXTERNDEF output_handle:HANDLE
 
-; ¤lµ{§Çªº¥~³¡©w¸q¡G«Å§i PROTO §Y¥i
+; å­ç¨‹åºçš„å¤–éƒ¨å®šç¾©ï¼šå®£å‘Š PROTO å³å¯
 DrawBox PROTO, box:Box
 
 
-; ¥¨¶°ªº©w¸q¡Gª½±µ©ñ¤J§Y¥i
+; å·¨é›†çš„å®šç¾©ï¼šç›´æ¥æ”¾å…¥å³å¯
 mOutputInit MACRO
     LOCAL info
+    LOCAL buffer_size
     .data
     info CONSOLE_CURSOR_INFO < 0, 0 >
     .code
-    INVOKE GetStdHandle, STD_OUTPUT_HANDLE                  ; Àò¨ú output handle
+    INVOKE GetStdHandle, STD_OUTPUT_HANDLE                  ; ç²å– output handle
     mov output_handle, eax
-    INVOKE SetConsoleCursorInfo, output_handle, ADDR info   ; ÁôÂÃ´å¼Ğ
+    INVOKE SetConsoleCursorInfo, output_handle, ADDR info   ; éš±è—æ¸¸æ¨™
 ENDM

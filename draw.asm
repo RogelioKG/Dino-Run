@@ -16,40 +16,42 @@ count           DWORD               0
 .code
 DrawBox PROC box:Box
 
-    LOCAL cur_pos:COORD             ; Ã¸»s´å¼Ğ
-    LOCAL cur_address:DWORD         ; Ã¸»s¦ì§} (¦s¨úª«Åé²°¤£¦P°ª«×ªº´è¬V¦r¤¸)
+    LOCAL cur_pos:COORD             ; ç¹ªè£½æ¸¸æ¨™
+    LOCAL cur_address:DWORD         ; ç¹ªè£½ä½å€ (å­˜å–ç‰©é«”ç›’ä¸åŒé«˜åº¦çš„æ¸²æŸ“å­—å…ƒ)
 
-    lea edi, cur_pos                ; Ã¸»s´å¼Ğªì©l¦ì¸m¬°ª«Åé²°ªº¥ª¤W¨¤
-    mov ax, box.pos.X
+    lea edi, cur_pos                ; ç¹ªè£½æ¸¸æ¨™åˆå§‹ä½ç½®ç‚ºç‰©é«”ç›’çš„å·¦ä¸Šè§’
+    mov eax, box.pos.X
     mov (COORD PTR [edi]).X, ax
-    mov ax, box.pos.Y
+    mov eax, box.pos.Y
+    sub eax, box.dim.Y
+    add eax, 1
     mov (COORD PTR [edi]).Y, ax
 
     mov edi, box.contents_ptr
-    mov cur_address, edi            ; Ã¸»s¦ì§}ªì©l­ÈÀ³¬°¤º®eªº¶}ÀY¦ì§}
+    mov cur_address, edi            ; ç¹ªè£½ä½å€åˆå§‹å€¼æ‡‰ç‚ºå…§å®¹çš„é–‹é ­ä½å€
 
-    mov ecx, box.ydim               ; ª«Åé²°ªº°ª«×
-draw:                               ; ¶}©l³v¦CÃ¸»s
-    push ecx                        ; ¤U­±ªº¤lµ{§ÇÁô¦¡¨Ï¥Î ecx¡A¦]¦Ó¹w¥ı push
+    mov ecx, box.dim.Y              ; ç‰©é«”ç›’çš„é«˜åº¦
+draw:                               ; é–‹å§‹é€åˆ—ç¹ªè£½
+    push ecx                        ; ä¸‹é¢çš„å­ç¨‹åºéš±å¼ä½¿ç”¨ ecxï¼Œå› è€Œé å…ˆ push
 
     INVOKE WriteConsoleOutputAttribute,
         output_handle,
         box.attr_ptr,
-        box.xdim,
+        box.dim.X,
         cur_pos,
         OFFSET cells_written 
 
     INVOKE WriteConsoleOutputCharacter,
         output_handle,
         cur_address,
-        box.xdim,
+        box.dim.X,
         cur_pos,
         OFFSET count
 
-    pop ecx                         ; ¤lµ{§Ç©I¥sµ²§ô¡A±N ecx pop ¦^¨Ó
-    inc cur_pos.Y                   ; Ã¸»s´å¼Ğ©¹¤U²¾°Ê
-    mov eax, box.xdim
-    add cur_address, eax            ; Ã¸»s¦ì§}²¾°Ê¨ì¤U­Ó°ª«×
+    pop ecx                         ; å­ç¨‹åºå‘¼å«çµæŸï¼Œå°‡ ecx pop å›ä¾†
+    inc cur_pos.Y                   ; ç¹ªè£½æ¸¸æ¨™å¾€ä¸‹ç§»å‹•
+    mov eax, box.dim.X
+    add cur_address, eax            ; ç¹ªè£½ä½å€ç§»å‹•åˆ°ä¸‹å€‹é«˜åº¦
     loop draw
  
     ret
