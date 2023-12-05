@@ -25,13 +25,13 @@ recto_red               RectBuddy   <>
 recto_attribute_red     WORD        recto_xdim DUP(lightRed)
 ; ------------------------------------------------------------------------
 ; ¤º®eª«
-recto_contents          BYTE        0DAh, (recto_xdim - 2) DUP(0C4h), 0BFh
-                        BYTE        0B3h, (recto_xdim - 2) DUP(' ') , 0B3h
-                        BYTE        0B3h, (recto_xdim - 2) DUP(' ') , 0B3h
-                        BYTE        0B3h, (recto_xdim - 2) DUP(' ') , 0B3h
-                        BYTE        0B3h, (recto_xdim - 2) DUP(' ') , 0B3h
-                        BYTE        0B3h, (recto_xdim - 2) DUP(' ') , 0B3h
-                        BYTE        0C0h, (recto_xdim - 2) DUP(0C4h), 0D9h
+recto_contents          BYTE        recto_xdim DUP("@")
+                        BYTE        recto_xdim DUP("@")
+                        BYTE        recto_xdim DUP("@")
+                        BYTE        recto_xdim DUP("@")
+                        BYTE        recto_xdim DUP("@")
+                        BYTE        recto_xdim DUP("@")
+                        BYTE        recto_xdim DUP("@")
 ; ************************************************************************
 
 

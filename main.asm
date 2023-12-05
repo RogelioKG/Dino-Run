@@ -10,15 +10,28 @@ INCLUDE object.inc
 INCLUDE draw.inc
 
 .data
-last_key        WORD    ?
+ground      WORD    ?
+last_key    WORD    ?
+
 
 .code
 main PROC
 
     mOutputInit
+
+    .repeat
+        INVOKE Sleep, 500
+        call Clrscr
+        mov ax, 0
+        call GetMaxXY   ; dx = cols (x:width), ax = rows (y:height)
+        call WriteInt
+    .until (ax > 80)
+
+    mov ground, ax
+
     mDinoGreenInit  0, 0
-    mRectoRedInit   40, 23
-    mRectoBlueInit  20, 7
+    mRectoRedInit   240, 80
+    mRectoBlueInit  120, 80
 
     call Clrscr
     INVOKE DrawBox, recto_blue.box
@@ -32,20 +45,20 @@ look_for_key:
     jz no_key                   ; 沒有任何鍵盤輸入
 got_key:
     .if (dx == VK_LEFT)
-        sub recto_blue.box.pos.X, 1
+        sub dino_green.box.pos.X, 1
     .elseif (dx == VK_RIGHT)
-        add recto_blue.box.pos.X, 1
+        add dino_green.box.pos.X, 1
     .elseif (dx == VK_SPACE)
-        sub recto_blue.box.pos.Y, 2
+        sub dino_green.box.pos.Y, 2
     .else
         jmp look_for_key
     .endif
     .if (dx == VK_LEFT)
-        sub recto_blue.box.pos.X, 1
+        sub dino_green.box.pos.X, 1
     .elseif (dx == VK_RIGHT)
-        add recto_blue.box.pos.X, 1
+        add dino_green.box.pos.X, 1
     .elseif (dx == VK_SPACE)
-        sub recto_blue.box.pos.Y, 2
+        sub dino_green.box.pos.Y, 2
     .else
         jmp look_for_key
     .endif
@@ -54,17 +67,16 @@ got_key:
 no_key:
     call GetMaxXY
     mov ebx, 0
-    movzx ebx, recto_blue.box.pos.Y
-    add ebx, recto_blue.box.ydim
+    movzx ebx, dino_green.box.pos.Y
+    add ebx, dino_green.box.ydim
     .if (bx >= ax)
         jmp look_for_key
     .else
-        add recto_blue.box.pos.Y, 1
+        add dino_green.box.pos.Y, 1
         jmp draw
     .endif
 draw:
     call Clrscr
-    
     INVOKE DrawBox, recto_blue.box
     INVOKE DrawBox, recto_red.box
     INVOKE DrawBox, dino_green.box
