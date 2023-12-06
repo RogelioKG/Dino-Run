@@ -8,13 +8,52 @@ INCLUDE Irvine32.inc
 INCLUDE object.inc
 INCLUDE draw.inc
 
+
 .data
 output_handle   HANDLE              ?
+info            CONSOLE_CURSOR_INFO < 100, 0 >
 cells_written   DWORD               ?
 count           DWORD               0
 
+
 .code
-DrawBox PROC box:Box
+; -------------------
+; Name:
+;     OutputInit
+; Brief:
+;     初始化繪製
+; Uses:
+;     eax
+; Params:
+;     ...
+; Returns:
+;     ...
+; Example:
+;     call OutputInit
+; -------------------
+OutputInit PROC
+    INVOKE GetStdHandle, STD_OUTPUT_HANDLE                  ; 獲取 output handle
+    mov output_handle, eax
+    INVOKE SetConsoleCursorInfo, output_handle, ADDR info   ; 隱藏游標
+    ret
+OutputInit ENDP
+
+; ----------------------------------
+; Name:
+;     DrawBox
+; Brief:
+;     繪製物體盒
+; Uses:
+;     eax ecx edi
+; Params:
+;     box = 物體盒 (Box)
+; Returns:
+;     ...
+; Example:
+;     INVOKE DrawBox, dino_green.box
+;     繪製綠色小恐龍的物體盒
+; ----------------------------------
+DrawBox PROC box:BOX
 
     LOCAL cur_pos:COORD             ; 繪製游標
     LOCAL cur_address:DWORD         ; 繪製位址 (存取物體盒不同高度的渲染字元)

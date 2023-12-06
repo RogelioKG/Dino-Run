@@ -15,33 +15,27 @@ ground      WORD    ?
 .code
 main PROC
 
-    mOutputInit
-
+    call OutputInit
     .repeat
         INVOKE Sleep, 500
         call Clrscr
         mov ax, 0
         call GetMaxXY               ; dx = cols, ax = rows
         call WriteInt
-    .until (ax > 80)
+    .until (ax > 100)
 
     sub ax, 1
     mov ground, ax                  ; 地板座標 (94 cols -> y = 93)
 
-    mDinoGreenInit    20, 93
-    mCactusGreenInit 240, 93
-    mRectoRedInit    120, 93
-    mRectoBlueInit    60, 93
+    INVOKE BoxSetPos, ADDR dino_green.box,    20, ground
+    INVOKE BoxSetPos, ADDR cactus_green.box, 240, ground
+    INVOKE BoxSetPos, ADDR recto_red.box,    120, ground
+    INVOKE BoxSetPos, ADDR recto_blue.box,    60, ground
 
-    call Clrscr
-    INVOKE DrawBox, dino_green.box
-    INVOKE DrawBox, cactus_green.box
-    INVOKE DrawBox, recto_blue.box
-    INVOKE DrawBox, recto_red.box
+    jmp draw
 
 look_for_key:
-    mov  eax, 40                    ; sleep，讓 OS 有時間做 time slicing
-    call Delay                      ; 
+    INVOKE Sleep, 40                ; sleep，讓 OS 有時間做 time slicing
     call ReadKey                    ; 讀取輸入鍵
     jz no_key                       ; 如果沒有輸入鍵
 got_key:
@@ -72,5 +66,6 @@ draw:
     jmp look_for_key
 
     exit
+
 main ENDP
 END main
