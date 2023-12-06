@@ -1,3 +1,6 @@
+IFNDEF DRAW_INC
+DRAW_INC EQU < 1 >
+
 TITLE draw.inc
 OPTION casemap:none
 
@@ -17,3 +20,5 @@ DrawBox     PROTO, box:BOX
 
 ; 巨集的定義：直接放入即可
 ; ...
+
+ENDIF

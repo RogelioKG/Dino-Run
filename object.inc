@@ -1,3 +1,6 @@
+IFNDEF OBJECT_INC
+OBJECT_INC EQU < 1 >
+
 TITLE object.inc
 OPTION casemap:none
 
@@ -61,3 +64,6 @@ BoxSetPos PROTO box_ptr:PTR BOX, x:DWORD, y:DWORD
 
 ; 巨集的定義：直接放入即可
 ; ...
+
+
+ENDIF
