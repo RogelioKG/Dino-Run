@@ -22,3 +22,5 @@ Last Update: 2023/12/06
 + **被噁心到**：**MASM32 似乎對 16-bit 結構的取值有些問題 (COORD)**
     > Solution:
     > 1. 全面改用 DWORD
+
+![alt dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/Image/dino.png)
