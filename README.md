@@ -23,4 +23,8 @@ Last Update: 2023/12/06
     > Solution:
     > 1. 可行：全面改用 DWORD
 
++ **札記**
+    + 12/07
+        > 嘗試 MASM32 SDK，寫個批次檔進行組譯連結，有成功。小木偶的 [input.asm](https://wanker742126.neocities.org/old/win32asm/w32asm_ch03) 和 [parabola.asm](https://wanker742126.neocities.org/old/win32asm/w32asm_ch04) 自己試著組譯連結後，運作良好。這表示將專案改以 MASM32 SDK 是可行方案，但開發上記憶體/暫存器除錯可能是一大困難。
+
 ![alt dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/Image/dino.png)
