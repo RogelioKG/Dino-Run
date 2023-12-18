@@ -15,7 +15,6 @@ info            CONSOLE_CURSOR_INFO < 100, 0 >
 cells_written   DWORD               ?
 count           DWORD               0
 
-
 .code
 ; -------------------
 ; Name:
@@ -23,11 +22,11 @@ count           DWORD               0
 ; Brief:
 ;     初始化繪製
 ; Uses:
-;     eax
+;     ...
 ; Params:
 ;     ...
 ; Returns:
-;     ...
+;     eax = output handle
 ; Example:
 ;     call OutputInit
 ; -------------------
@@ -46,14 +45,14 @@ OutputInit ENDP
 ; Uses:
 ;     eax ecx edi
 ; Params:
-;     box = 物體盒 (Box)
+;     box = 物體盒 (BOX)
 ; Returns:
 ;     ...
 ; Example:
 ;     INVOKE DrawBox, dino_green.box
 ;     繪製綠色小恐龍的物體盒
 ; ----------------------------------
-DrawBox PROC box:BOX
+DrawBox PROC USES eax ecx edi box:BOX
 
     LOCAL cur_pos:COORD             ; 繪製游標
     LOCAL cur_address:DWORD         ; 繪製位址 (存取物體盒不同高度的渲染字元)
@@ -96,5 +95,48 @@ draw:                               ; 開始逐列繪製
     ret
 
 DrawBox ENDP
+
+; ----------------------------------
+; Name:
+;     DrawScore
+; Brief:
+;     繪製分數
+; Uses:
+;     eax ebx edx esi edi
+; Params:
+;     score = 分數 (DWORD)
+;         x = 最後一位數左下角 x 座標 (DWORD)
+;         y = 最後一位數左下角 y 座標 (DWORD)
+; Returns:
+;     ...
+; Example:
+;     INVOKE DrawScore, 390, 10, 10
+;     繪製分數
+; ----------------------------------
+DrawScore PROC USES eax ebx edx esi edi score:DWORD, x:DWORD, y:DWORD
+
+    LOCAL score_digits:DWORD    ; 位數 (7)
+    LOCAL spacing_offset:DWORD  ; 偏移 (10)
+    mov score_digits, 7
+    mov spacing_offset, 10
+
+    mov eax, score
+    .while (score_digits != 0)
+        xor edx, edx                            ; 取出 score 的每一位數
+        mov ebx, 10                             ; 10 進制
+        div ebx                                 ;
+
+        mov esi, digits[edx * TYPE DWORD]       ; 繪製
+        lea edi, (OBJECT PTR [esi]).box         ;
+        INVOKE BoxSetPos, edi, x, y             ;
+        INVOKE DrawBox, (OBJECT PTR [esi]).box  ;
+
+        mov ebx, spacing_offset                 ; 結束時更新條件
+        sub x, ebx                              ;
+        dec score_digits                        ;
+    .endw
+
+    ret
+DrawScore ENDP
 
 END

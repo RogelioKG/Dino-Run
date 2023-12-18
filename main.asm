@@ -9,60 +9,182 @@ INCLUDE Macros.inc
 INCLUDE object.inc
 INCLUDE draw.inc
 
+mStartGame MACRO
+    mov score, 0                                      ; ¤À¼Æ­«¸m
+    INVOKE BoxSetPos, ADDR dino_white.box, 20, ground ; ¤p®£Às®y¼Ð­«¸m
+    mov is_jumping, 0                                 ; ¤p®£Às¤W¤Éª¬ºA­«¸m
+    mov jump_counter, 0                               ; ¤p®£Às¤W¤É­p¼Æ¾¹­«¸m
+ENDM
+
 .data
-ground      WORD    ?
+; ¹CÀ¸
+ground          WORD    127
+game_mode       DWORD   0   ; 0: ªì©l¼Ò¦¡, 1: ¹Cª±¼Ò¦¡, 2: ¼È°±¼Ò¦¡, 3 µ²§ô¼Ò¦¡
+
+; ¤p®£Às
+is_jumping      DWORD   0   ; 0: «D¸õÅDª¬ºA, 1: ¤W¤Éª¬ºA, 2: ¤U­°ª¬ºA
+jump_height     DWORD   6   ; ¤p®£Às¨C¦¸§ó·s¤W¤É°ª«×
+jump_times      DWORD   12  ; ¤p®£Às¤W¤É¦^¦X
+jump_counter    DWORD   0   ; ¤p®£Às¤W¤É­p¼Æ¾¹
+lr_move         DWORD   5   ; ¤p®£Às¥ª¥k²¾°Ê
+l_move_boundary DWORD   10  ; ¤p®£Às¥ª²¾Ãä¬É
+r_move_boundary DWORD   300 ; ¤p®£Às¥k²¾Ãä¬É
+
+; ¥P¤H´x
+is_cactus       DWORD   0   ; 0: ¥P¤H´x©|¥¼¥X²{, 1: ¥P¤H´x¤w¥X²{
+cactus_move     DWORD   10  ; ¥P¤H´x¦V¥ª²¾°Ê
+cactus_range    DWORD   30  ; ¥P¤H´x¥X²{ÀH¾÷½d³ò
+cactus_initial  DWORD   0   ; ¥P¤H´x¥X²{ªì©l½d³ò (°¾²¾¶q)
+cactus_random1  DWORD   0   ; ¥P¤H´xÀH¾÷¥X²{
+
+; ­p¤À
+score           DWORD   0   ; ¥Ø«e¤À¼Æ (7¦ì¼Æ)
+high_score      DWORD   0   ; ¾ú¥v³Ì°ª¤À¼Æ (7¦ì¼Æ)
+last_digit_x    DWORD   510 ; score ªº X ®y¼Ð (³Ì«á¤@¦ì¼Æ¥ª¤U¨¤)
+score_y         DWORD   30  ; score ªº Y ®y¼Ð
+high_score_y    DWORD   20  ; high_score ªº Y ®y¼Ð
+
 
 .code
 main PROC
 
     call OutputInit
-    .repeat
-        INVOKE Sleep, 500
-        call Clrscr
-        mov ax, 0
-        call GetMaxXY               ; dx = cols, ax = rows
-        call WriteInt
-    .until (ax > 100)
 
-    sub ax, 1
-    mov ground, ax                  ; åœ°æ¿åº§æ¨™ (94 cols -> y = 93)
-
-    INVOKE BoxSetPos, ADDR dino_green.box,    20, ground
-    INVOKE BoxSetPos, ADDR cactus_green.box, 240, ground
-    INVOKE BoxSetPos, ADDR recto_red.box,    120, ground
-    INVOKE BoxSetPos, ADDR recto_blue.box,    60, ground
+    INVOKE BoxSetPos, ADDR     dino_white.box,  20, ground
+    INVOKE BoxSetPos, ADDR   cactus_green.box, 400, ground
+    INVOKE BoxSetPos, ADDR  game_over_str.box, 250, 50
+    INVOKE BoxSetPos, ADDR game_start_str.box, 180, 50
+    INVOKE BoxSetPos, ADDR      score_str.box, 400, score_y
+    INVOKE BoxSetPos, ADDR high_score_str.box, 364, high_score_y
 
     jmp draw
 
 look_for_key:
-    INVOKE Sleep, 40                ; sleepï¼Œè®“ OS æœ‰æ™‚é–“åš time slicing
-    call ReadKey                    ; è®€å–è¼¸å…¥éµ
-    jz no_key                       ; å¦‚æžœæ²’æœ‰è¼¸å…¥éµ
-got_key:
-    .if (dx == VK_LEFT)
-        sub dino_green.box.pos.X, 2
-    .elseif (dx == VK_RIGHT)
-        add dino_green.box.pos.X, 2
-    .elseif (dx == VK_SPACE)
-        sub dino_green.box.pos.Y, 2
-    .else
-        jmp look_for_key
+    INVOKE Sleep, 20                            ; sleep¡AÅý OS ¦³®É¶¡°µ time slicing
+    call ReadKey                                ; Åª¨ú¿é¤JÁä
+
+key_detect:
+    .if (game_mode == 0)                        ; @ ¹CÀ¸¥¼¶}©l    
+        .if (dx == VK_SPACE)                    ; «öªÅ¥ÕÁä¶}©l¹CÀ¸
+            mov game_mode, 1
+            mStartGame
+        .endif
+
+    .elseif (game_mode == 1)                    ; @ ¹CÀ¸¤w¶}©l
+        inc score                               ; ¨C´V +1 ¤À
+        .if (is_jumping == 1 || is_jumping == 2)
+            jmp jump
+        .elseif (dx == VK_LEFT)
+            mov eax, l_move_boundary
+            .if (dino_white.box.pos.X > eax)    ; ¤p®£Às¥ª²¾Ãä¬É
+                mov eax, lr_move
+                sub dino_white.box.pos.X, eax
+            .endif
+        .elseif (dx == VK_RIGHT)
+            mov eax, r_move_boundary
+            .if (dino_white.box.pos.X < eax)    ; ¤p®£Às¥k²¾Ãä¬É
+                mov eax, lr_move
+                add dino_white.box.pos.X, eax
+            .endif
+        .elseif (dx == VK_SPACE)
+            .if (is_jumping == 0)
+                mov is_jumping, 1
+            .endif
+        .elseif (dx == VK_RETURN)               ; ¼È°±¹CÀ¸
+            mov game_mode, 2
+        .endif
+
+    .elseif (game_mode == 2)                    ; @ ¹CÀ¸¤w¼È°±
+        .if (dx == VK_SPACE)                    ; «öªÅ¥ÕÁä¡u­«·s¡v¶}©l¹CÀ¸
+            mov game_mode, 1
+        .endif
+
+    .elseif (game_mode == 3)                    ; @ ¹CÀ¸¤wµ²§ô
+        mov eax, score
+        .if (eax > high_score)                  ; §PÂ_¬O§_»Ý§ó§ï¹CÀ¸³Ì°ª¤À
+            mov high_score, eax
+        .endif
+        .if (dx == VK_SPACE)                    ; «öªÅ¥ÕÁä¡u­«·s¡v¶}©l¹CÀ¸
+            mov game_mode, 1
+            mStartGame
+        .endif
+
     .endif
     jmp draw
-no_key:
-    mov ebx, dino_green.box.pos.Y
-    .if (bx >= ground)
-        jmp look_for_key
-    .else
-        add dino_green.box.pos.Y, 2
-        jmp draw
+
+jump:
+    mov ecx, jump_counter
+    .if (is_jumping == 1)
+        .if (ecx == jump_times)
+            mov is_jumping, 2
+            mov jump_counter, 0
+            jmp draw
+        .else
+            mov eax, jump_height
+            sub dino_white.box.pos.Y, eax
+            inc jump_counter
+            jmp draw
+        .endif
+    .elseif (is_jumping == 2)
+        .if (ecx == jump_times)
+            mov is_jumping, 0
+            mov jump_counter, 0
+            jmp draw
+        .else
+            mov eax, jump_height
+            add dino_white.box.pos.Y, eax
+            inc jump_counter
+            jmp draw
+        .endif
     .endif
+
 draw:
     call Clrscr
-    INVOKE DrawBox, dino_green.box
-    INVOKE DrawBox, cactus_green.box
-    INVOKE DrawBox, recto_blue.box
-    INVOKE DrawBox, recto_red.box
+    .if (game_mode == 0)                        ; @ ¹CÀ¸¥¼¶}©l
+        INVOKE DrawBox, game_start_str.box
+    .elseif (game_mode == 3)                    ; @ ¹CÀ¸¤wµ²§ô
+        INVOKE DrawBox, game_over_str.box
+    .endif
+    INVOKE DrawBox, dino_white.box
+    INVOKE DrawBox, score_str.box
+    INVOKE DrawBox, high_score_str.box
+    INVOKE DrawScore, score, last_digit_x, score_y
+    INVOKE DrawScore, high_score, last_digit_x, high_score_y
+
+cactus:
+    .if (game_mode == 1)                        ; @ ¹CÀ¸¤w¶}©l
+        .if (is_cactus == 0)                    ; ¥P¤H´x¥¼¥X²{
+            .if (cactus_random1 == 0)           ; ©|¥¼¦³ÀH¾÷ÅÜ¼Æ
+                mov eax, cactus_range
+                call RandomRange
+                add eax, cactus_initial         ; °¾²¾¶q
+                mov cactus_random1, eax
+            .else                               ; ¦³ÀH¾÷ÅÜ¼Æ
+                dec cactus_random1
+                .if (cactus_random1 == 0)       ; ¤wµ¥«Ý§¹²¦
+                     mov is_cactus, 1
+                .endif
+            .endif
+        .else                                   ; ¥P¤H´x¤w¥X²{¡AÀË´ú¸I¼²
+            INVOKE DetectCollison, ADDR cactus_green.box, ADDR dino_white.box
+            .if (edx == 1)                      ; ¦³¸I¼²¡I
+                mov game_mode, 3                ; ¹CÀ¸§ï¬°µ²§ô¼Ò¦¡
+                mov is_cactus, 0                ; ¥P¤H´x§ï¬°¤£¦s¦b¼Ò¦¡
+                mov cactus_green.box.pos.X, 361 
+
+            .else                               ; ¨S¦³¸I¼²¡I
+                mov eax, cactus_green.box.pos.X
+                .if (eax <= 1)                  ; ·í¥P¤H´x¤w©è¹FÃä¬É
+                    mov is_cactus, 0            ; ¥P¤H´x§ï¬°¤£¦s¦b¼Ò¦¡
+                    mov cactus_green.box.pos.X, 361
+                .else                           ; ·í¥P¤H´x¥¼©è¹FÃä¬É
+                    INVOKE DrawBox, cactus_green.box
+                    mov eax, cactus_move
+                    sub cactus_green.box.pos.X, eax
+                .endif
+            .endif
+        .endif
+    .endif
     jmp look_for_key
 
     exit

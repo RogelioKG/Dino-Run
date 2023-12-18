@@ -21,7 +21,7 @@ BOX STRUCT
     pos             PAIRS   <>  ; (8 Bytes) 左下角座標
 BOX ENDS                        ; (24 Bytes)
 
-; 一般物體
+; 物件
 OBJECT STRUCT
     box             BOX     <>  ; (24 Bytes) 物體盒
     status          DWORD   ?   ; (4 Bytes)  NotImplemented
@@ -38,29 +38,57 @@ CHARACTER ENDS
 
 ; 小恐龍
 ; ****************************************
-; 角色: 綠色小恐龍
-EXTERNDEF dino_green            :CHARACTER
+; 角色: 白色小恐龍
+EXTERNDEF dino_white            :CHARACTER
 ; ****************************************
 
 ; 神奇小框
 ; ****************************************
-; 角色: 神奇小藍框
+; 物件: 神奇小藍框
 EXTERNDEF recto_blue            :OBJECT
 ; ----------------------------------------
-; 角色: 神奇小紅框
+; 物件: 神奇小紅框
 EXTERNDEF recto_red             :OBJECT
 ; ****************************************
 
 ; 仙人掌
 ; ****************************************
-; 角色: 綠色仙人掌
+; 物件: 綠色仙人掌
 EXTERNDEF cactus_green          :OBJECT
 ; ****************************************
 
+; 遊戲開始
+; ****************************************
+; 物件: 遊戲開始字體
+EXTERNDEF game_start_str        :OBJECT
+; ****************************************
+
+; 遊戲結束
+; ****************************************
+; 物件: 遊戲結束字體
+EXTERNDEF game_over_str         :OBJECT
+; ****************************************
+
+; 遊戲分數
+; ****************************************
+; 物件: 遊戲分數字體
+EXTERNDEF score_str             :OBJECT
+; ****************************************
+
+; 遊戲最高分數
+; ****************************************
+; 物件: 遊戲最高分數字體
+EXTERNDEF high_score_str        :OBJECT
+; ****************************************
+
+; 數字指標陣列 (array of OBJECT PTR)
+; ****************************************
+EXTERNDEF digits                :DWORD
+; ****************************************
 
 ; 子程序的外部定義：宣告 PROTO 即可
 BoxSetPos PROTO box_ptr:PTR BOX, x:DWORD, y:DWORD
-
+DetectCollison PROTO box1_ptr:PTR BOX, box2_ptr:PTR BOX
 
 ; 巨集的定義：直接放入即可
 ; ...
