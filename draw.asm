@@ -37,6 +37,7 @@ OutputInit PROC
     ret
 OutputInit ENDP
 
+
 ; ----------------------------------
 ; Name:
 ;     DrawBox
@@ -95,6 +96,7 @@ draw:                               ; 開始逐列繪製
     ret
 
 DrawBox ENDP
+
 
 ; ----------------------------------
 ; Name:

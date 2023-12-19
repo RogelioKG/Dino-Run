@@ -24,13 +24,17 @@ BOX ENDS                        ; (24 Bytes)
 ; 物件
 OBJECT STRUCT
     box             BOX     <>  ; (24 Bytes) 物體盒
-    status          DWORD   ?   ; (4 Bytes)  NotImplemented
+    exists          DWORD   0   ; (4 Bytes)  存在與否 (BOOL)
 OBJECT ENDS
 
 ; 角色
 CHARACTER STRUCT
     box             BOX     <>  ; (24 Bytes) 物體盒
-    status          DWORD   ?   ; (4 Bytes)  NotImplemented
+    jumping         DWORD   0   ; (4 Bytes)  跳躍狀態   (0: 非跳躍狀態 | 1: 上升狀態 | 2: 下降狀態)
+    jump_counter    DWORD   0   ; (4 Bytes)  上升計數器 (幀數到時，往下掉或者結束跳躍)
+    lifting         DWORD   0   ; (4 Bytes)  抬腳狀態   (0: 非抬腳狀態 | 1: 左抬腳狀態 | 2: 右抬腳狀態)
+    lift_counter    DWORD   0   ; (4 Bytes)  抬腳計數器 (幀數到時，換腳)
+    bowing          DWORD   0   ; (4 Bytes)  彎腰狀態   (0: 非彎腰狀態 | 1: 彎腰狀態)
 CHARACTER ENDS
 
 
@@ -42,19 +46,16 @@ CHARACTER ENDS
 EXTERNDEF dino_white            :CHARACTER
 ; ****************************************
 
-; 神奇小框
-; ****************************************
-; 物件: 神奇小藍框
-EXTERNDEF recto_blue            :OBJECT
-; ----------------------------------------
-; 物件: 神奇小紅框
-EXTERNDEF recto_red             :OBJECT
-; ****************************************
-
-; 仙人掌
+; 仙人掌一號
 ; ****************************************
 ; 物件: 綠色仙人掌
-EXTERNDEF cactus_green          :OBJECT
+EXTERNDEF cactus1_green         :OBJECT
+; ****************************************
+
+; 仙人掌二號
+; ****************************************
+; 物件: 綠色仙人掌
+EXTERNDEF cactus2_green         :OBJECT
 ; ****************************************
 
 ; 遊戲開始
@@ -88,8 +89,12 @@ EXTERNDEF digits                :DWORD
 ; ****************************************
 
 ; 子程序的外部定義：宣告 PROTO 即可
-BoxSetPos PROTO box_ptr:PTR BOX, x:DWORD, y:DWORD
+BoxSetPos       PROTO box_ptr:PTR BOX, x:DWORD, y:DWORD
 DetectCollision PROTO box1_ptr:PTR BOX, box2_ptr:PTR BOX
+DinoSwitchJump  PROTO state:DWORD
+DinoSwitchLift  PROTO state:DWORD
+DinoSwitchBow   PROTO state:DWORD
+DinoChangeBody  PROTO
 
 ; 巨集的定義：直接放入即可
 ; ...

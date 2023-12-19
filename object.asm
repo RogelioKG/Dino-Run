@@ -10,15 +10,17 @@ INCLUDE object.inc
 
 .data
 
-
 ; 小恐龍
 ; ****************************************************************************
 ; 尺寸
-dino_xdim               =    40
-dino_ydim               =    42
+dino_norm_xdim          =           40
+dino_norm_ydim          =           42
+dino_bow_xdim           =           57
+dino_bow_ydim           =           26
 ; ----------------------------------------------------------------------------
 ; 內容物屬性
-dino_attribute_white    WORD dino_xdim DUP(white)
+dino_norm_attribute_white WORD      dino_norm_xdim DUP(white)
+dino_bow_attribute_white  WORD      dino_bow_xdim DUP(white)
 ; ----------------------------------------------------------------------------
 ; 內容物字串
 dino_contents           BYTE        "                      @@@@@@@@@@@@@@@@  "
@@ -63,48 +65,162 @@ dino_contents           BYTE        "                      @@@@@@@@@@@@@@@@  "
                         BYTE        "          @@        @@                  "
                         BYTE        "          @@@@      @@@@                "
                         BYTE        "          @@@@      @@@@                "
+
+dino_l_contents         BYTE        "                      @@@@@@@@@@@@@@@@  "
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@  @@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@  @@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@          "
+                        BYTE        "                    @@@@@@@@@@          "
+                        BYTE        "                    @@@@@@@@@@@@@@@@    "
+                        BYTE        "                    @@@@@@@@@@@@@@@@    "
+                        BYTE        "@@                @@@@@@@@@@            "
+                        BYTE        "@@                @@@@@@@@@@            "
+                        BYTE        "@@             @@@@@@@@@@@@@            "
+                        BYTE        "@@             @@@@@@@@@@@@@            "
+                        BYTE        "@@@@        @@@@@@@@@@@@@@@@@@@@        "
+                        BYTE        "@@@@        @@@@@@@@@@@@@@@@@@@@        "
+                        BYTE        "@@@@@@    @@@@@@@@@@@@@@@@@@  @@        "
+                        BYTE        "@@@@@@    @@@@@@@@@@@@@@@@@@  @@        "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "      @@@@@@@@@@@@@@@@@@                "
+                        BYTE        "      @@@@@@@@@@@@@@@@@@                "
+                        BYTE        "        @@@@@@@@@@@@@@                  "
+                        BYTE        "        @@@@@@@@@@@@@@                  "
+                        BYTE        "          @@@@    @@@@                  "
+                        BYTE        "          @@@@    @@@@                  "
+                        BYTE        "            @@@@    @@                  "
+                        BYTE        "            @@@@    @@                  "
+                        BYTE        "                    @@                  "
+                        BYTE        "                    @@                  "
+                        BYTE        "                    @@@@                "
+                        BYTE        "                    @@@@                "
+
+dino_r_contents         BYTE        "                      @@@@@@@@@@@@@@@@  "
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@  @@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@  @@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                    @@@@@@@@@@          "
+                        BYTE        "                    @@@@@@@@@@          "
+                        BYTE        "                    @@@@@@@@@@@@@@@@    "
+                        BYTE        "                    @@@@@@@@@@@@@@@@    "
+                        BYTE        "@@                @@@@@@@@@@            "
+                        BYTE        "@@                @@@@@@@@@@            "
+                        BYTE        "@@             @@@@@@@@@@@@@            "
+                        BYTE        "@@             @@@@@@@@@@@@@            "
+                        BYTE        "@@@@        @@@@@@@@@@@@@@@@@@@@        "
+                        BYTE        "@@@@        @@@@@@@@@@@@@@@@@@@@        "
+                        BYTE        "@@@@@@    @@@@@@@@@@@@@@@@@@  @@        "
+                        BYTE        "@@@@@@    @@@@@@@@@@@@@@@@@@  @@        "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@@@            "
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "      @@@@@@@@@@@@@@@@@@                "
+                        BYTE        "      @@@@@@@@@@@@@@@@@@                "
+                        BYTE        "        @@@@@@@@@@@@@@                  "
+                        BYTE        "        @@@@@@@@@@@@@@                  "
+                        BYTE        "          @@@@@@    @@@@@               "
+                        BYTE        "          @@@@@@    @@@@@               "
+                        BYTE        "          @@@@                          "
+                        BYTE        "          @@@@                          "
+                        BYTE        "          @@                            "
+                        BYTE        "          @@                            "
+                        BYTE        "          @@@@                          "
+                        BYTE        "          @@@@                          "
+
+dino_bl_contents       BYTE        "@@                                                       "
+                        BYTE        "  @@                                   @@@@@@@@@@@@@@@@  "
+                        BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@      @@@@@@@@@@@@@@@@  "
+                        BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@"
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@"
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          "
+                        BYTE        "          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@    "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@    "
+                        BYTE        "              @@@@@@@@@@@@@@@@@@@@@                      "
+                        BYTE        "              @@@@@@@@@@@@     @@                        "
+                        BYTE        "             @@@@@@    @@@@@   @@                        "
+                        BYTE        "             @@@@@@    @@@@@   @@@@                      "
+                        BYTE        "             @@@@              @@@@                      "
+                        BYTE        "             @@@@                                        "
+                        BYTE        "             @@                                          "
+                        BYTE        "             @@                                          "
+                        BYTE        "             @@@@                                        "
+                        BYTE        "             @@@@                                        "
+
+dino_br_contents        BYTE        "@@                                                       "
+                        BYTE        "  @@                                   @@@@@@@@@@@@@@@@  "
+                        BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@      @@@@@@@@@@@@@@@@  "
+                        BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@"
+                        BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@"
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          "
+                        BYTE        "          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@    "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@    "
+                        BYTE        "              @@@@@@@@@@@@@@@@@@@@@                      "
+                        BYTE        "              @@@@@@@@@@@@     @@                        "
+                        BYTE        "             @@    @@@@@@      @@                        "
+                        BYTE        "             @@    @@@@@@      @@@@                      "
+                        BYTE        "             @@@@  @@@@        @@@@                      "
+                        BYTE        "             @@@@  @@@@                                  "
+                        BYTE        "                   @@                                    "
+                        BYTE        "                   @@                                    "
+                        BYTE        "                   @@@@                                  "
+                        BYTE        "                   @@@@                                  "
 ; ----------------------------------------------------------------------------
-; 角色: 灰色小恐龍
-dino_white              CHARACTER   << OFFSET dino_contents,        \
-                                       OFFSET dino_attribute_white, \
-                                       < dino_xdim, dino_ydim >    >>
+; 角色: 白色小恐龍
+dino_white              CHARACTER   << OFFSET dino_contents,               \
+                                       OFFSET dino_norm_attribute_white,   \
+                                       < dino_norm_xdim, dino_norm_ydim > >>
 ; ****************************************************************************
 
 
-; 神奇小框
+; 仙人掌一號
 ; ****************************************************************************
 ; 尺寸
-recto_xdim              =           24
-recto_ydim              =           12
+cactus1_xdim            =           23
+cactus1_ydim            =           46
 ; ----------------------------------------------------------------------------
 ; 內容物字串
-recto_contents          BYTE        recto_xdim * recto_ydim DUP("@")
-; ----------------------------------------------------------------------------
-; 內容物屬性
-recto_attribute_blue    WORD        recto_xdim DUP(lightCyan)
-recto_attribute_red     WORD        recto_xdim DUP(lightRed)
-; ----------------------------------------------------------------------------
-; 物件: 神奇小藍框
-recto_blue              OBJECT      << OFFSET recto_contents,       \
-                                       OFFSET recto_attribute_blue, \
-                                       < recto_xdim, recto_ydim >  >>
-; ----------------------------------------------------------------------------
-; 物件: 神奇小紅框
-recto_red               OBJECT      << OFFSET recto_contents,      \
-                                       OFFSET recto_attribute_red, \
-                                       < recto_xdim, recto_ydim > >>
-; ****************************************************************************
-
-
-
-; 仙人掌
-; ****************************************************************************
-; 尺寸
-cactus_xdim             =           23
-cactus_ydim             =           46
-; ----------------------------------------------------------------------------
-; 內容物字串
-cactus_contents         BYTE        "         @@@@@         "
+cactus1_contents        BYTE        "         @@@@@         "
                         BYTE        "        @@@@@@@        "
                         BYTE        "        @@@@@@@        "
                         BYTE        "        @@@@@@@        "
@@ -152,22 +268,85 @@ cactus_contents         BYTE        "         @@@@@         "
                         BYTE        "    @ @@@@@@@@@     @  "
 ; ----------------------------------------------------------------------------
 ; 內容物屬性
-cactus_attribute_green  WORD        cactus_xdim DUP(lightGreen)
+cactus1_attribute_green WORD        cactus1_xdim DUP(lightGreen)
 ; ----------------------------------------------------------------------------
-; 物件: 綠色仙人掌
-cactus_green            OBJECT      << OFFSET cactus_contents,        \
-                                       OFFSET cactus_attribute_green, \
-                                       < cactus_xdim, cactus_ydim >  >>
+; 物件: 綠色仙人掌一號
+cactus1_green           OBJECT      << OFFSET cactus1_contents,        \
+                                       OFFSET cactus1_attribute_green, \
+                                       < cactus1_xdim, cactus1_ydim > >>
+; ****************************************************************************
+
+; 仙人掌二號
+; ****************************************************************************
+; 尺寸
+cactus2_xdim            =           48
+cactus2_ydim            =           46
+; ----------------------------------------------------------------------------
+; 內容物字串
+cactus2_contents        BYTE        "         @@@@@                    @@@@@         "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@           @@@    @@@@@@@        "
+                        BYTE        "        @@@@@@@          @@@@@   @@@@@@@        "
+                        BYTE        "        @@@@@@@          @@@@@   @@@@@@@        "
+                        BYTE        "        @@@@@@@          @@@@@   @@@@@@@        "
+                        BYTE        "        @@@@@@@          @@@@@   @@@@@@@        "
+                        BYTE        "        @@@@@@@    @@    @@@@@   @@@@@@@    @@@ "
+                        BYTE        "        @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        " @@@    @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@   @@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@   @@@@@@@@@@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@    @@@@@@@@@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@     @@@@@@@@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@      @@@@@@@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@       @@@@@@@@@@@   @@@@@"
+                        BYTE        "@@@@@   @@@@@@@   @@@@           @@@@@@@   @@@@@"
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@            @@@@@@@@@@@@@@ "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@             @@@@@@@@@@@@@  "
+                        BYTE        " @@@@@@@@@@@@@@@@@@              @@@@@@@@@@@@   "
+                        BYTE        "  @@@@@@@@@@@@@                  @@@@@@@@@@     "
+                        BYTE        "    @@@@@@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@                  @@@@@@@        "
+                        BYTE        "        @@@@@@@   @              @@@@@@@   @    "
+                        BYTE        "    @ @@@@@@@@@ @    @       @ @@@@@@@@@ @    @ "
+; ----------------------------------------------------------------------------
+; 內容物屬性
+cactus2_attribute_green WORD        cactus2_xdim DUP(lightGreen)
+; ----------------------------------------------------------------------------
+; 物件: 綠色仙人掌二號
+cactus2_green           OBJECT      << OFFSET cactus2_contents,        \
+                                       OFFSET cactus2_attribute_green, \
+                                       < cactus2_xdim, cactus2_ydim > >>
 ; ****************************************************************************
 
 ; 遊戲開始
 ; ****************************************************************************
 ; 尺寸
-game_start_xdim         =    215
-game_start_ydim         =    8
+game_start_xdim         =           215
+game_start_ydim         =           8
 ; ----------------------------------------------------------------------------
 ; 內容物屬性
-game_start_attribute_white WORD game_start_xdim DUP(white)
+game_start_attribute_white WORD     game_start_xdim DUP(white)
 ; ----------------------------------------------------------------------------
 ; 內容物字串
 
@@ -182,22 +361,21 @@ game_start_contents     BYTE        " /$$$$$$$  /$$   /$$  /$$$$$$  /$$   /$$   
 
 ; ----------------------------------------------------------------------------
 ; 物件: 遊戲結束字體
-game_start_str          OBJECT   << OFFSET game_start_contents,           \
-                                    OFFSET game_start_attribute_white,    \
-                                    < game_start_xdim, game_start_ydim > >>
+game_start_str          OBJECT      << OFFSET game_start_contents,           \
+                                       OFFSET game_start_attribute_white,    \
+                                       < game_start_xdim, game_start_ydim > >>
 ; ****************************************************************************
 
 ; 遊戲結束
 ; ****************************************************************************
 ; 尺寸
-game_over_xdim          =    91
-game_over_ydim          =    9
+game_over_xdim          =           91
+game_over_ydim          =           9
 ; ----------------------------------------------------------------------------
 ; 內容物屬性
-game_over_attribute_white WORD game_over_xdim DUP(white)
+game_over_attribute_white WORD      game_over_xdim DUP(white)
 ; ----------------------------------------------------------------------------
 ; 內容物字串
-
 game_over_contents      BYTE        "  /$$$$$$                                                                                  "
                         BYTE        " /$$__  $$                                                                                 "
                         BYTE        "| $$  \__/  /$$$$$$  /$$$$$$/$$$$   /$$$$$$         /$$$$$$  /$$    /$$ /$$$$$$   /$$$$$$  "
@@ -207,24 +385,21 @@ game_over_contents      BYTE        "  /$$$$$$                                  
                         BYTE        "|  $$$$$$/|  $$$$$$$| $$ | $$ | $$|  $$$$$$$      |  $$$$$$/   \  $/  |  $$$$$$$| $$       "
                         BYTE        " \______/  \_______/|__/ |__/ |__/ \_______/       \______/     \_/    \_______/|__/       "
                         BYTE        "                                                                                           "
-
-                            
-
 ; ----------------------------------------------------------------------------
 ; 物件: 遊戲結束字體
-game_over_str           OBJECT   << OFFSET game_over_contents,          \
-                                    OFFSET game_over_attribute_white,   \
-                                    < game_over_xdim, game_over_ydim > >>
+game_over_str           OBJECT      << OFFSET game_over_contents,          \
+                                       OFFSET game_over_attribute_white,   \
+                                       < game_over_xdim, game_over_ydim > >>
 ; ****************************************************************************
 
 ; 遊戲分數
 ; ****************************************************************************
 ; 尺寸
-score_xdim              =    49
-score_ydim              =    5
+score_xdim              =           49
+score_ydim              =           5
 ; ----------------------------------------------------------------------------
 ; 內容物屬性
-score_attribute_white   WORD score_xdim DUP(white)
+score_attribute_white   WORD        score_xdim DUP(white)
 ; ----------------------------------------------------------------------------
 ; 內容物字串                        
 score_contents          BYTE        "@@@@@@@  @@@@@@  @@@@@@  @@@@@@  @@@@@@@         "   
@@ -234,19 +409,19 @@ score_contents          BYTE        "@@@@@@@  @@@@@@  @@@@@@  @@@@@@  @@@@@@@   
                         BYTE        "@@@@@@@  @@@@@@  @@@@@@  @@   @@ @@@@@@@         "
 ; ----------------------------------------------------------------------------
 ; 物件: 遊戲分數字體
-score_str               OBJECT   << OFFSET score_contents,        \
-                                    OFFSET score_attribute_white, \
-                                    < score_xdim, score_ydim >   >>
+score_str               OBJECT      << OFFSET score_contents,        \
+                                       OFFSET score_attribute_white, \
+                                       < score_xdim, score_ydim >   >>
 ; ****************************************************************************
 
 ; 遊戲最高分數
 ; ****************************************************************************
 ; 尺寸
-high_score_xdim         =    85
-high_score_ydim         =    5
+high_score_xdim         =           85
+high_score_ydim         =           5
 ; ----------------------------------------------------------------------------
 ; 內容物屬性
-high_score_attribute_white WORD high_score_xdim DUP(white)
+high_score_attribute_white WORD     high_score_xdim DUP(white)
 ; ----------------------------------------------------------------------------
 ; 內容物字串               
 high_score_contents     BYTE        "@@   @@ @@@@@@  @@@@@@  @@   @@     @@@@@@@  @@@@@@  @@@@@@  @@@@@@  @@@@@@@         "     
@@ -256,125 +431,125 @@ high_score_contents     BYTE        "@@   @@ @@@@@@  @@@@@@  @@   @@     @@@@@@@
                         BYTE        "@@   @@ @@@@@@  @@@@@@  @@   @@     @@@@@@@  @@@@@@  @@@@@@  @@   @@ @@@@@@@         "
 ; ----------------------------------------------------------------------------
 ; 物件: 遊戲最高分數字體
-high_score_str          OBJECT   << OFFSET high_score_contents,           \
-                                    OFFSET high_score_attribute_white,    \
-                                    < high_score_xdim, high_score_ydim > >>
+high_score_str          OBJECT      << OFFSET high_score_contents,           \
+                                       OFFSET high_score_attribute_white,    \
+                                       < high_score_xdim, high_score_ydim > >>
 ; ****************************************************************************
 
 ; 數字
 ; ****************************************************************************
 ; 尺寸
-digit_xdim               =    10
-digit_ydim               =    5
+digit_xdim               =          10
+digit_ydim               =          5
 ; ----------------------------------------------------------------------------
 ; 內容物屬性
-digit_attribute_white    WORD digit_xdim DUP(white)
+digit_attribute_white    WORD       digit_xdim DUP(white)
 ; ----------------------------------------------------------------------------
 ; 內容物字串               
-digit_0_contents         BYTE        " @@@@@@   "  
-                         BYTE        "@@  @@@@  "   
-                         BYTE        "@@ @@ @@  "   
-                         BYTE        "@@@@  @@  "   
-                         BYTE        " @@@@@@   "
+digit_0_contents         BYTE       " @@@@@@   "  
+                         BYTE       "@@  @@@@  "   
+                         BYTE       "@@ @@ @@  "   
+                         BYTE       "@@@@  @@  "   
+                         BYTE       " @@@@@@   "
 
-digit_1_contents         BYTE        "    @@    "     
-                         BYTE        "  @@@@    "     
-                         BYTE        "    @@    "     
-                         BYTE        "    @@    "     
-                         BYTE        "    @@    "
+digit_1_contents         BYTE       "    @@    "     
+                         BYTE       "  @@@@    "     
+                         BYTE       "    @@    "     
+                         BYTE       "    @@    "     
+                         BYTE       "    @@    "
 
-digit_2_contents         BYTE        " @@@@@@@  "   
-                         BYTE        "      @@  " 
-                         BYTE        "  @@@@@   "
-                         BYTE        " @@       "
-                         BYTE        " @@@@@@@  "
+digit_2_contents         BYTE       " @@@@@@@  "   
+                         BYTE       "      @@  " 
+                         BYTE       "  @@@@@   "
+                         BYTE       " @@       "
+                         BYTE       " @@@@@@@  "
 
-digit_3_contents         BYTE        " @@@@@@   "
-                         BYTE        "      @@  "
-                         BYTE        "  @@@@@   "
-                         BYTE        "      @@  "
-                         BYTE        " @@@@@@   "
+digit_3_contents         BYTE       " @@@@@@   "
+                         BYTE       "      @@  "
+                         BYTE       "  @@@@@   "
+                         BYTE       "      @@  "
+                         BYTE       " @@@@@@   "
 
-digit_4_contents         BYTE        " @@   @@  "
-                         BYTE        " @@   @@  "
-                         BYTE        " @@@@@@@  "
-                         BYTE        "      @@  "
-                         BYTE        "      @@  "
+digit_4_contents         BYTE       " @@   @@  "
+                         BYTE       " @@   @@  "
+                         BYTE       " @@@@@@@  "
+                         BYTE       "      @@  "
+                         BYTE       "      @@  "
 
-digit_5_contents         BYTE        " @@@@@@@  "
-                         BYTE        " @@       "
-                         BYTE        " @@@@@@@  "
-                         BYTE        "      @@  "
-                         BYTE        " @@@@@@@  "
+digit_5_contents         BYTE       " @@@@@@@  "
+                         BYTE       " @@       "
+                         BYTE       " @@@@@@@  "
+                         BYTE       "      @@  "
+                         BYTE       " @@@@@@@  "
 
-digit_6_contents         BYTE        "  @@@@@@  " 
-                         BYTE        " @@       "
-                         BYTE        " @@@@@@@  "
-                         BYTE        " @@    @@ "
-                         BYTE        "  @@@@@@  "
+digit_6_contents         BYTE       "  @@@@@@  " 
+                         BYTE       " @@       "
+                         BYTE       " @@@@@@@  "
+                         BYTE       " @@    @@ "
+                         BYTE       "  @@@@@@  "
 
-digit_7_contents         BYTE        " @@@@@@@  "
-                         BYTE        "      @@  "
-                         BYTE        "     @@   "
-                         BYTE        "    @@    "
-                         BYTE        "    @@    "
+digit_7_contents         BYTE       " @@@@@@@  "
+                         BYTE       "      @@  "
+                         BYTE       "     @@   "
+                         BYTE       "    @@    "
+                         BYTE       "    @@    "
 
-digit_8_contents         BYTE        "  @@@@@   "
-                         BYTE        " @@   @@  "
-                         BYTE        "  @@@@@   "
-                         BYTE        " @@   @@  "
-                         BYTE        "  @@@@@   "
+digit_8_contents         BYTE       "  @@@@@   "
+                         BYTE       " @@   @@  "
+                         BYTE       "  @@@@@   "
+                         BYTE       " @@   @@  "
+                         BYTE       "  @@@@@   "
 
-digit_9_contents         BYTE        "  @@@@@   " 
-                         BYTE        " @@   @@  "
-                         BYTE        "  @@@@@@  "
-                         BYTE        "      @@  "
-                         BYTE        "  @@@@@   "
+digit_9_contents         BYTE       "  @@@@@   " 
+                         BYTE       " @@   @@  "
+                         BYTE       "  @@@@@@  "
+                         BYTE       "      @@  "
+                         BYTE       "  @@@@@   "
 ; ----------------------------------------------------------------------------
 ; 物件: 數字0
-digit_0                  OBJECT   << OFFSET digit_0_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_0                  OBJECT     << OFFSET digit_0_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字1
-digit_1                  OBJECT   << OFFSET digit_1_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_1                  OBJECT     << OFFSET digit_1_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字2
-digit_2                  OBJECT   << OFFSET digit_2_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_2                  OBJECT     << OFFSET digit_2_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字3
-digit_3                  OBJECT   << OFFSET digit_3_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_3                  OBJECT     << OFFSET digit_3_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字4
-digit_4                  OBJECT   << OFFSET digit_4_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_4                  OBJECT     << OFFSET digit_4_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字5
-digit_5                  OBJECT   << OFFSET digit_5_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_5                  OBJECT     << OFFSET digit_5_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字6
-digit_6                  OBJECT   << OFFSET digit_6_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_6                  OBJECT     << OFFSET digit_6_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字7
-digit_7                  OBJECT   << OFFSET digit_7_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_7                  OBJECT     << OFFSET digit_7_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字8
-digit_8                  OBJECT   << OFFSET digit_8_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_8                  OBJECT     << OFFSET digit_8_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; 物件: 數字9
-digit_9                  OBJECT   << OFFSET digit_9_contents,       \
-                                     OFFSET digit_attribute_white,  \
-                                     < digit_xdim, digit_ydim >    >>
+digit_9                  OBJECT     << OFFSET digit_9_contents,       \
+                                       OFFSET digit_attribute_white,  \
+                                       < digit_xdim, digit_ydim >    >>
 ; ----------------------------------------------------------------------------
 ; 數字指標陣列
-digits                   DWORD    OFFSET digit_0, OFFSET digit_1, OFFSET digit_2, OFFSET digit_3, OFFSET digit_4, \
-                                  OFFSET digit_5, OFFSET digit_6, OFFSET digit_7, OFFSET digit_8, OFFSET digit_9
+digits                   DWORD      OFFSET digit_0, OFFSET digit_1, OFFSET digit_2, OFFSET digit_3, OFFSET digit_4, \
+                                    OFFSET digit_5, OFFSET digit_6, OFFSET digit_7, OFFSET digit_8, OFFSET digit_9
 ; ****************************************************************************
 
 .code
@@ -403,6 +578,7 @@ BoxSetPos PROC USES eax esi box_ptr:PTR BOX, x:DWORD, y:DWORD
     mov (BOX PTR [esi]).pos.Y, eax
     ret
 BoxSetPos ENDP
+
 
 ; -------------------------------------------------
 ; Name:
@@ -446,7 +622,9 @@ DetectCollision PROC USES eax ebx ecx esi edi box1_ptr:PTR BOX, box2_ptr:PTR BOX
             .if (eax > ecx)
                 mov ecx, (BOX PTR [esi]).pos.X
                 .if (ebx > ecx)
+
                     mov collided, 1
+
                 .endif
             .endif
 
@@ -456,5 +634,142 @@ DetectCollision PROC USES eax ebx ecx esi edi box1_ptr:PTR BOX, box2_ptr:PTR BOX
     mov edx, collided
     ret
 DetectCollision ENDP
+
+
+; -------------------------------------------------
+; Name:
+;     DinoSwitchJump
+; Brief:
+;     跳躍狀態更新，清空 counter
+; Uses:
+;     eax
+; Params:
+;     state = jumping (DWORD)
+; Returns:
+;     ...
+; Example:
+;     INVOKE DinoSwitchLift, 2
+; -------------------------------------------------
+DinoSwitchJump PROC USES eax state:DWORD
+    mov eax, state
+    mov dino_white.jumping, eax
+    mov dino_white.jump_counter, 0
+    ret
+DinoSwitchJump ENDP
+
+
+; -------------------------------------------------
+; Name:
+;     DinoSwitchLift
+; Brief:
+;     抬腳狀態更新，清空 counter
+; Uses:
+;     eax
+; Params:
+;     state = lifting (DWORD)
+; Returns:
+;     ...
+; Example:
+;     INVOKE DinoSwitchLift, 0
+; -------------------------------------------------
+DinoSwitchLift PROC USES eax state:DWORD
+    mov eax, state
+    mov dino_white.lifting, eax
+    mov dino_white.lift_counter, 0
+    ret
+DinoSwitchLift ENDP
+
+
+; -------------------------------------------------
+; Name:
+;     DinoSwitchLift
+; Brief:
+;     彎腰狀態更新
+; Uses:
+;     eax
+; Params:
+;     state = bowing (DWORD)
+; Returns:
+;     ...
+; Example:
+;     INVOKE DinoSwitchBow, 0
+; -------------------------------------------------
+DinoSwitchBow PROC USES eax state:DWORD
+    mov eax, state
+    mov dino_white.bowing, eax
+    ret
+DinoSwitchBow ENDP
+
+
+; -------------------------------------------------
+; Name:
+;     DinoChangeBody
+; Brief:
+;     小恐龍切換身體 (無參數，僅根據當前 lifting / bowing 狀態切換身體)
+; Uses:
+;     eax
+; Params:
+;     state = bowing (DWORD)
+; Returns:
+;     ...
+; Example:
+;     call DinoChangeBody
+;
+;     | lifting | bowing |
+;     |     0   |    0   | 沒抬腿沒彎腰
+;     |     0   |    1   | (不可能發生)
+;     |     1   |    0   | 抬左腿沒彎腰
+;     |     1   |    1   | 抬左腿有彎腰
+;     |     2   |    0   | 抬右腿沒彎腰
+;     |     2   |    1   | 抬右腿有彎腰
+; -------------------------------------------------
+DinoChangeBody PROC USES eax
+    .if (dino_white.lifting == 0)
+        .if (dino_white.bowing == 0)     ; 沒抬腿沒彎腰
+            mov dino_white.box.contents_ptr, OFFSET dino_contents
+            mov dino_white.box.attr_ptr, OFFSET dino_norm_attribute_white
+            mov eax, dino_norm_xdim
+            mov dino_white.box.dim.X, eax
+            mov eax, dino_norm_ydim
+            mov dino_white.box.dim.Y, eax
+        .endif
+
+    .elseif (dino_white.lifting == 1)
+        .if (dino_white.bowing == 0)     ; 抬左腿沒彎腰
+            mov dino_white.box.contents_ptr, OFFSET dino_l_contents
+            mov eax, dino_norm_xdim
+            mov dino_white.box.dim.X, eax
+            mov eax, dino_norm_ydim
+            mov dino_white.box.dim.Y, eax
+
+        .elseif (dino_white.bowing == 1) ; 抬左腿有彎腰
+            mov dino_white.box.contents_ptr, OFFSET dino_bl_contents
+            mov dino_white.box.attr_ptr, OFFSET dino_bow_attribute_white
+            mov eax, dino_bow_xdim
+            mov dino_white.box.dim.X, eax
+            mov eax, dino_bow_ydim
+            mov dino_white.box.dim.Y, eax
+        .endif
+
+    .elseif (dino_white.lifting == 2)
+        .if (dino_white.bowing == 0)     ; 抬右腿沒彎腰
+            mov dino_white.box.contents_ptr, OFFSET dino_r_contents
+            mov eax, dino_norm_xdim
+            mov dino_white.box.dim.X, eax
+            mov eax, dino_norm_ydim
+            mov dino_white.box.dim.Y, eax
+
+        .elseif (dino_white.bowing == 1) ; 抬右腿有彎腰
+            mov dino_white.box.contents_ptr, OFFSET dino_br_contents
+            mov dino_white.box.attr_ptr, OFFSET dino_bow_attribute_white
+            mov eax, dino_bow_xdim
+            mov dino_white.box.dim.X, eax
+            mov eax, dino_bow_ydim
+            mov dino_white.box.dim.Y, eax
+        .endif
+
+    .endif
+    ret
+DinoChangeBody ENDP
 
 END
