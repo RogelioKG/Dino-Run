@@ -406,7 +406,7 @@ BoxSetPos ENDP
 
 ; -------------------------------------------------
 ; Name:
-;     DetectCollison
+;     DetectCollision
 ; Brief:
 ;     檢測兩物體盒的碰撞與否
 ; Uses:
@@ -417,10 +417,10 @@ BoxSetPos ENDP
 ; Returns:
 ;     edx = 0: 未碰撞, 1: 碰撞
 ; Example:
-;     INVOKE DetectCollison, ADDR cactus_green.box, ADDR dino_white.box
+;     INVOKE DetectCollision, ADDR cactus_green.box, ADDR dino_white.box
 ;     引數可交換，下方註解以舉例進行說明
 ; -------------------------------------------------
-DetectCollison PROC USES eax ebx ecx esi edi box1_ptr:PTR BOX, box2_ptr:PTR BOX
+DetectCollision PROC USES eax ebx ecx esi edi box1_ptr:PTR BOX, box2_ptr:PTR BOX
     LOCAL collided:DWORD
     mov collided, 0                             ; 一開始假設沒有相撞
 
@@ -455,6 +455,6 @@ DetectCollison PROC USES eax ebx ecx esi edi box1_ptr:PTR BOX, box2_ptr:PTR BOX
 
     mov edx, collided
     ret
-DetectCollison ENDP
+DetectCollision ENDP
 
 END

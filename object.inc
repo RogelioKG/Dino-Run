@@ -81,14 +81,15 @@ EXTERNDEF score_str             :OBJECT
 EXTERNDEF high_score_str        :OBJECT
 ; ****************************************
 
-; 數字指標陣列 (array of OBJECT PTR)
+; 數字字體
 ; ****************************************
+; 物件指標陣列: 數字字體
 EXTERNDEF digits                :DWORD
 ; ****************************************
 
 ; 子程序的外部定義：宣告 PROTO 即可
 BoxSetPos PROTO box_ptr:PTR BOX, x:DWORD, y:DWORD
-DetectCollison PROTO box1_ptr:PTR BOX, box2_ptr:PTR BOX
+DetectCollision PROTO box1_ptr:PTR BOX, box2_ptr:PTR BOX
 
 ; 巨集的定義：直接放入即可
 ; ...

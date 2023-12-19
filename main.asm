@@ -166,7 +166,7 @@ cactus:
                 .endif
             .endif
         .else                                   ; 仙人掌已出現，檢測碰撞
-            INVOKE DetectCollison, ADDR cactus_green.box, ADDR dino_white.box
+            INVOKE DetectCollision, ADDR cactus_green.box, ADDR dino_white.box
             .if (edx == 1)                      ; 有碰撞！
                 mov game_mode, 3                ; 遊戲改為結束模式
                 mov is_cactus, 0                ; 仙人掌改為不存在模式
