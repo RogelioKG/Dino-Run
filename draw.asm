@@ -124,9 +124,9 @@ DrawScore PROC USES eax ebx edx esi edi score:DWORD, x:DWORD, y:DWORD
 
     mov eax, score
     .while (score_digits != 0)
-        xor edx, edx                            ; 取出 score 的每一位數
+        xor edx, edx                            ;
         mov ebx, 10                             ; 10 進制
-        div ebx                                 ;
+        div ebx                                 ; 取出 score 的每一位數
 
         mov esi, digits[edx * TYPE DWORD]       ; 繪製
         lea edi, (OBJECT PTR [esi]).box         ;

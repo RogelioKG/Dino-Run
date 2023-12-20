@@ -80,7 +80,7 @@ dino_l_contents         BYTE        "                      @@@@@@@@@@@@@@@@  "
                         BYTE        "                    @@@@@@@@@@          "
                         BYTE        "                    @@@@@@@@@@@@@@@@    "
                         BYTE        "                    @@@@@@@@@@@@@@@@    "
-                        BYTE        "@@                @@@@@@@@@@            "
+                        BYTE        " @                @@@@@@@@@@            "
                         BYTE        "@@                @@@@@@@@@@            "
                         BYTE        "@@             @@@@@@@@@@@@@            "
                         BYTE        "@@             @@@@@@@@@@@@@            "
@@ -123,7 +123,7 @@ dino_r_contents         BYTE        "                      @@@@@@@@@@@@@@@@  "
                         BYTE        "                    @@@@@@@@@@          "
                         BYTE        "                    @@@@@@@@@@@@@@@@    "
                         BYTE        "                    @@@@@@@@@@@@@@@@    "
-                        BYTE        "@@                @@@@@@@@@@            "
+                        BYTE        "@                 @@@@@@@@@@            "
                         BYTE        "@@                @@@@@@@@@@            "
                         BYTE        "@@             @@@@@@@@@@@@@            "
                         BYTE        "@@             @@@@@@@@@@@@@            "
@@ -152,7 +152,7 @@ dino_r_contents         BYTE        "                      @@@@@@@@@@@@@@@@  "
                         BYTE        "          @@@@                          "
                         BYTE        "          @@@@                          "
 
-dino_bl_contents       BYTE        "@@                                                       "
+dino_bl_contents        BYTE        "@@                                                       "
                         BYTE        "  @@                                   @@@@@@@@@@@@@@@@  "
                         BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@      @@@@@@@@@@@@@@@@  "
                         BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@"
@@ -179,8 +179,8 @@ dino_bl_contents       BYTE        "@@                                          
                         BYTE        "             @@@@                                        "
                         BYTE        "             @@@@                                        "
 
-dino_br_contents        BYTE        "@@                                                       "
-                        BYTE        "  @@                                   @@@@@@@@@@@@@@@@  "
+dino_br_contents        BYTE        "@                                                        "
+                        BYTE        " @@@                                   @@@@@@@@@@@@@@@@  "
                         BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@      @@@@@@@@@@@@@@@@  "
                         BYTE        "  @@@@@@        @@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@"
                         BYTE        "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@"
@@ -207,7 +207,7 @@ dino_br_contents        BYTE        "@@                                         
                         BYTE        "                   @@@@                                  "
 ; ----------------------------------------------------------------------------
 ; 角色: 白色小恐龍
-dino_white              CHARACTER   << OFFSET dino_contents,               \
+dino_white              DINO        << OFFSET dino_contents,               \
                                        OFFSET dino_norm_attribute_white,   \
                                        < dino_norm_xdim, dino_norm_ydim > >>
 ; ****************************************************************************
@@ -271,9 +271,9 @@ cactus1_contents        BYTE        "         @@@@@         "
 cactus1_attribute_green WORD        cactus1_xdim DUP(lightGreen)
 ; ----------------------------------------------------------------------------
 ; 物件: 綠色仙人掌一號
-cactus1_green           OBJECT      << OFFSET cactus1_contents,        \
-                                       OFFSET cactus1_attribute_green, \
-                                       < cactus1_xdim, cactus1_ydim > >>
+cactus1_green           STATIC_ENEMY << OFFSET cactus1_contents,        \
+                                        OFFSET cactus1_attribute_green, \
+                                        < cactus1_xdim, cactus1_ydim > >>
 ; ****************************************************************************
 
 ; 仙人掌二號
@@ -334,9 +334,78 @@ cactus2_contents        BYTE        "         @@@@@                    @@@@@    
 cactus2_attribute_green WORD        cactus2_xdim DUP(lightGreen)
 ; ----------------------------------------------------------------------------
 ; 物件: 綠色仙人掌二號
-cactus2_green           OBJECT      << OFFSET cactus2_contents,        \
-                                       OFFSET cactus2_attribute_green, \
-                                       < cactus2_xdim, cactus2_ydim > >>
+cactus2_green           STATIC_ENEMY << OFFSET cactus2_contents,        \
+                                        OFFSET cactus2_attribute_green, \
+                                        < cactus2_xdim, cactus2_ydim > >>
+; ****************************************************************************
+
+; 鳥一號
+; ****************************************************************************
+; 尺寸
+bird1_xdim              =           42
+bird1_ydim              =           25
+; ----------------------------------------------------------------------------
+bird1_u_contents        BYTE        "              @                           "
+                        BYTE        "              @@@@                        "
+                        BYTE        "              @@@@                        "
+                        BYTE        "              @@@@@@                      "
+                        BYTE        "              @@@@@@                      "
+                        BYTE        "                @@@@@@                    "
+                        BYTE        "         @@@    @@@@@@                    "
+                        BYTE        "      @@@@@@    @@@@@@@@                  "
+                        BYTE        "      @@@@@@    @@@@@@@@                  "
+                        BYTE        "    @@@@@@@@@@  @@@@@@@@@@                "
+                        BYTE        "    @@@ @@@@@@  @@@@@@@@@@                "
+                        BYTE        "  @@@@@@@@@@@@  @@@@@@@@@@@@              "
+                        BYTE        "  @@@@@@@@@@@@  @@@@@@@@@@@@              "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "     @@@@@@@@@@@@@@@@@@@@@@@@@@           "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@            "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@            "
+                        BYTE        "              @@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "              @@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                @@@@@@@@@@@@@@@@@@@@      "
+                        BYTE        "                @@@@@@@@@@@@@@@@@@@@      "
+                        BYTE        "                  @@@@@@@@@@@@@@@@@@@@@@  "
+                        BYTE        "                  @@@@@@@@@@@@@@@@@@@@@@  "
+                        BYTE        "                    @@@@@@@@@@@@@@        "
+                        BYTE        "                    @@@@@@@@@@@@@@        "
+
+bird1_d_contents        BYTE        "         @@@                              "
+                        BYTE        "      @@@@@@                              "
+                        BYTE        "      @@@@@@                              "
+                        BYTE        "    @@@@@@@@@@                            "
+                        BYTE        "    @@@ @@@@@@                            "
+                        BYTE        "  @@@@@@@@@@@@                            "
+                        BYTE        "  @@@@@@@@@@@@                            "
+                        BYTE        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@              "
+                        BYTE        "     @@@@@@@@@@@@@@@@@@@@@@               "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@            "
+                        BYTE        "            @@@@@@@@@@@@@@@@@@            "
+                        BYTE        "              @@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "              @@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                        BYTE        "                @@@@@@@@@@@@@@@@@@@@      "
+                        BYTE        "                @@@@@@@@@@@@@@@@@@@@      "
+                        BYTE        "                @@@@@@@@@@@@@@@@@@@@@@@@  "
+                        BYTE        "                @@@@@@@@@@@@@@@@@@@@@@@@  "
+                        BYTE        "                @@@@@@@@@@@@@@@@@@        "
+                        BYTE        "                @@@@@@@@@@@@              "
+                        BYTE        "                @@@@@@@@                  "
+                        BYTE        "                @@@@@@@@                  "
+                        BYTE        "               @@@@@@                     "
+                        BYTE        "               @@@@@@                     "
+                        BYTE        "               @@@@                       "
+                        BYTE        "               @                          "
+; ----------------------------------------------------------------------------
+; 內容物屬性
+bird1_attribute_brown   WORD        bird1_xdim DUP(brown)
+; ----------------------------------------------------------------------------
+; 物件: 棕色鳥一號
+bird1_brown             DYNAMIC_ENEMY << OFFSET bird1_u_contents,      \
+                                         OFFSET bird1_attribute_brown, \
+                                         < bird1_xdim, bird1_ydim >,   \
+                                         < ?, ? > >,                   \
+                                         1, 0, OFFSET bird1_d_contents >
 ; ****************************************************************************
 
 ; 遊戲開始
@@ -771,5 +840,16 @@ DinoChangeBody PROC USES eax
     .endif
     ret
 DinoChangeBody ENDP
+
+
+DynamicEnemyChangeBody PROC USES esi eax ebx enemy_ptr:PTR DYNAMIC_ENEMY
+    mov esi, enemy_ptr
+    mov eax, (DYNAMIC_ENEMY PTR [esi]).box.contents_ptr ; 當前內容物指標
+    mov ebx, (DYNAMIC_ENEMY PTR [esi]).next             ; 下一內容物指標
+    xchg eax, ebx
+    mov (DYNAMIC_ENEMY PTR [esi]).box.contents_ptr, eax
+    mov (DYNAMIC_ENEMY PTR [esi]).next, ebx
+    ret
+DynamicEnemyChangeBody ENDP
 
 END

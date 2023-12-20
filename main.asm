@@ -8,108 +8,70 @@ INCLUDE Macros.inc
 ; local library
 INCLUDE object.inc
 INCLUDE draw.inc
+INCLUDE game_macros.inc
 
-mGameInit MACRO
-    mov score, 0                                    ; ¤À¼Æ­«¸m
-    INVOKE BoxSetPos, ADDR dino_white.box, 20, ylim ; ¤p®£Às®y¼Ğ­«¸m
-    mov dino_white.jumping, 0                       ; ¤p®£Às¤W¤Éª¬ºA­«¸m
-    mov dino_white.jump_counter, 0                  ; ¤p®£Às¤W¤É­p¼Æ¾¹­«¸m
-    INVOKE DinoSwitchLift, 1                        ; ¤p®£Às¤@¶}©l©ï¥ª¸}
-ENDM
-
-mCactusReset MACRO
-    mov cactus2_green.exists, 0                     ; ¥P¤H´x§ï¬°¤£¦s¦b¼Ò¦¡
-    mov eax, cactus_gen_pos
-    mov cactus2_green.box.pos.X, eax                ; ¥P¤H´x®y¼Ğ­«¸m
-ENDM
-
-; ¸õÅD§ó·s
-mJumpUpdate MACRO
-    mov ecx, dino_white.jump_counter
-    .if (dino_white.jumping == 1)
-        .if (ecx == jump_times)
-            INVOKE DinoSwitchJump, 2
-        .else
-            mov eax, jump_height
-            sub dino_white.box.pos.Y, eax
-            inc dino_white.jump_counter
-        .endif
-    .elseif (dino_white.jumping == 2)
-        .if (ecx == jump_times)
-            INVOKE DinoSwitchJump, 0
-            INVOKE DinoSwitchLift, 2                ; ¥k¸}µÛ¦a
-            call DinoChangeBody
-        .else
-            mov eax, jump_height
-            add dino_white.box.pos.Y, eax
-            inc dino_white.jump_counter
-        .endif
-    .endif
-ENDM
-
-; ©ï¸}§ó·s
-mLiftUpdate MACRO
-    mov ecx, dino_white.lift_counter
-    .if (ecx == lift_times)
-        .if (dino_white.lifting == 1)
-            INVOKE DinoSwitchLift, 2
-            call DinoChangeBody
-        .elseif (dino_white.lifting == 2)
-            INVOKE DinoSwitchLift, 1
-            call DinoChangeBody
-        .endif
-    .else
-        inc dino_white.lift_counter
-    .endif
-ENDM
-
-; ³Ì°ª¤À§ó·s
-mHighScoreUpdate MACRO
-    mov eax, score
-    .if (eax > high_score)                          
-        mov high_score, eax
-    .endif
-ENDM
+RandomChooseEnemy PROTO etype:DWORD
 
 .data
-
-; ¹CÀ¸
-xlim            DWORD   575 ; 
-ylim            DWORD   127 ; ground
-game_mode       DWORD   0   ; 0: ªì©l¼Ò¦¡, 1: ¹Cª±¼Ò¦¡, 2: ¼È°±¼Ò¦¡, 3 µ²§ô¼Ò¦¡
-
-; ¤p®£Às
-jump_height     DWORD   6   ; ¤p®£Às¤W¤É/¤U­°°ª«× (¨C¦^¦X)
-jump_times      DWORD   12  ; ¤p®£Às¤W¤É¦^¦X
-lr_move         DWORD   5   ; ¤p®£Às¥ª¥k²¾°Ê
-l_move_xlim     DWORD   0   ; ¤p®£Às¥ª²¾Ãä¬É
-r_move_xlim     DWORD   400 ; ¤p®£Às¥k²¾Ãä¬É
-lift_times      DWORD   3   ; ¤p®£Às©ï¸}¦^¦X
-
-; ¥P¤H´x
-cactus_move     DWORD   10  ; ¥P¤H´x¦V¥ª²¾°Ê
-cactus_gen_pos  DWORD   360 ; ¥P¤H´x¥Í¦¨¦ì¸m
-
-; ÀH¾÷
-initial_frame   DWORD   0   ; ¥X²{³Ì¤Ö©Ò»İ´V¼Æ
-rand_add_frame  DWORD   30  ; ÀH¾÷¥[½X´V¼Æ (0 ~ 30 frames)
-debut_req_frame DWORD   0   ; ¥X²{©Ò»İ´V¼Æ
-
-; ­p¤À
-score           DWORD   0   ; ¥Ø«e¤À¼Æ (7¦ì¼Æ)
-high_score      DWORD   0   ; ¾ú¥v³Ì°ª¤À¼Æ (7¦ì¼Æ)
-last_digit_x    DWORD   520 ; score »P high_score ªº X ®y¼Ğ (­Ó¦ì¼Æ¥ª¤U¨¤)
-score_y         DWORD   30  ; score ªº Y ®y¼Ğ
-high_score_y    DWORD   20  ; high_score ªº Y ®y¼Ğ
-
+; ***************************************************************************
+; éŠæˆ²
+xlim            =       575         ; boundary
+ylim            =       127         ; ground
+game_mode       DWORD   0           ; 0: åˆå§‹æ¨¡å¼, 1: éŠç©æ¨¡å¼, 2: æš«åœæ¨¡å¼, 3 çµæŸæ¨¡å¼
+; ---------------------------------------------------------------------------
+; å°æé¾
+lr_move         DWORD   5           ; å°æé¾å·¦å³ç§»å‹•é€Ÿåº¦
+l_move_xlim     DWORD   0           ; å°æé¾å·¦ç§»é‚Šç•Œ
+r_move_xlim     DWORD   400         ; å°æé¾å³ç§»é‚Šç•Œ
+jump_height     DWORD   6           ; å°æé¾ä¸Šå‡/ä¸‹é™é«˜åº¦ (æ¯å›åˆ)
+jump_times      DWORD   12          ; å°æé¾ä¸Šå‡å›åˆ
+lift_times      DWORD   3           ; å°æé¾æŠ¬è…³å›åˆ
+; ---------------------------------------------------------------------------
+; æ•µäºº
+current_enemy   DWORD   ?           ; ç•¶å‰æ•µäººæŒ‡æ¨™
+enemy_exists    DWORD   0           ; ç•«é¢ä¸­æ˜¯å¦æœ‰æ•µäºº
+enemy_type      DWORD   0           ; ç•¶å‰ç”Ÿæˆæ•µäººé¡å‹ - å°šæœªæ±ºå®š: 0, éœæ…‹: 1, å‹•æ…‹: 2
+; ---------------------------------------------------------------------------
+; éœæ…‹æ•µäºº
+static_move     DWORD   10          ; éœæ…‹æ•µäººå‘å·¦ç§»å‹•é€Ÿåº¦
+static_gen_x    DWORD   400         ; éœæ…‹æ•µäººé‡ç½®ä½ç½® (x åº§æ¨™)
+static_gen_y    DWORD   ylim        ; éœæ…‹æ•µäººé‡ç½®ä½ç½® (y åº§æ¨™)
+                                    ; éœæ…‹æ•µäººé™£åˆ—
+static_enemies  DWORD   OFFSET cactus1_green, OFFSET cactus2_green
+                                    ; éœæ…‹æ•µäººæ•¸é‡
+static_num      =       ($ - static_enemies) / TYPE DWORD
+; ---------------------------------------------------------------------------
+; å‹•æ…‹æ•µäºº
+status_times    DWORD   3           ; å‹•æ…‹æ•µäººç‹€æ…‹æ›´æ–°å›åˆ
+dynamic_move    DWORD   20          ; å‹•æ…‹æ•µäººå‘å·¦ç§»å‹•
+dynamic_gen_x   DWORD   400         ; å‹•æ…‹æ•µäººé‡ç½®ä½ç½® (x åº§æ¨™)
+dynamic_gen_y   DWORD   ylim - 30   ; å‹•æ…‹æ•µäººé‡ç½®ä½ç½® (y åº§æ¨™)
+                                    ; å‹•æ…‹æ•µäººé™£åˆ—
+dynamic_enemies DWORD   OFFSET bird1_brown
+                                    ; å‹•æ…‹æ•µäººæ•¸é‡
+dynamic_num     =       ($ - dynamic_enemies) / TYPE DWORD
+; ---------------------------------------------------------------------------
+; éš¨æ©Ÿ
+initial_frame   DWORD   5           ; å‡ºç¾æœ€å°‘æ‰€éœ€å¹€æ•¸
+rand_add_frame  DWORD   20          ; éš¨æ©ŸåŠ ç¢¼å¹€æ•¸ (0 ~ 30 frames)
+debut_req_frame DWORD   0           ; å‡ºç¾æ‰€éœ€å¹€æ•¸
+; ---------------------------------------------------------------------------
+; è¨ˆåˆ†
+score           DWORD   0           ; ç›®å‰åˆ†æ•¸ (7ä½æ•¸)
+high_score      DWORD   0           ; æ­·å²æœ€é«˜åˆ†æ•¸ (7ä½æ•¸)
+last_digit_x    DWORD   520         ; score èˆ‡ high_score çš„ X åº§æ¨™ (å€‹ä½æ•¸å·¦ä¸‹è§’)
+score_y         DWORD   30          ; score çš„ Y åº§æ¨™
+high_score_y    DWORD   20          ; high_score çš„ Y åº§æ¨™
+; ***************************************************************************
 
 .code
 main PROC
 
     call OutputInit
 
-    INVOKE BoxSetPos, ADDR     dino_white.box,  20, ylim
-    INVOKE BoxSetPos, ADDR  cactus2_green.box, 400, ylim
+    INVOKE BoxSetPos, ADDR     dino_white.box, 20, ylim
+    INVOKE BoxSetPos, ADDR  cactus1_green.box, static_gen_x, static_gen_y
+    INVOKE BoxSetPos, ADDR  cactus2_green.box, static_gen_x, static_gen_y
     INVOKE BoxSetPos, ADDR  game_over_str.box, 250, 50
     INVOKE BoxSetPos, ADDR game_start_str.box, 180, 50
     INVOKE BoxSetPos, ADDR      score_str.box, 400, score_y
@@ -120,38 +82,41 @@ main PROC
 game_loop:
 
 read_key:
-    INVOKE Sleep, 20                                ; sleep¡AÅı OS ¦³®É¶¡°µ time slicing
-    call ReadKey                                    ; Åª¨ú¿é¤JÁä
+    INVOKE Sleep, 20                                ; sleepï¼Œè®“ OS æœ‰æ™‚é–“åš time slicing
+    call ReadKey                                    ; è®€å–è¼¸å…¥éµ
 
 game_not_started_yet:
-    .if (game_mode == 0)                            ; @ ¹CÀ¸¥¼¶}©l
-        .if (dx == VK_SPACE)                        ; «öªÅ¥ÕÁä¡u¶}©l¡v¹CÀ¸
+    .if (game_mode == 0)                            ; @ éŠæˆ²æœªé–‹å§‹
+        .if (dx == VK_SPACE)                        ; æŒ‰ç©ºç™½éµã€Œé–‹å§‹ã€éŠæˆ²
             mov game_mode, 1
             mGameInit
         .endif
 
 gaming:
-    .elseif (game_mode == 1)                        ; @ ¹CÀ¸¶i¦æ¤¤
-        inc score                                   ; ¨C´V +1 ¤À
+    .elseif (game_mode == 1)                        ; @ éŠæˆ²é€²è¡Œä¸­
+        inc score                                   ; æ¯å¹€ +1 åˆ†
 
-        .if (dx == VK_ESCAPE)                       ; ¼È°±¹CÀ¸
+        ; ------------------------------------------
+        .if (dx == VK_ESCAPE)                       ; æš«åœéŠæˆ²
             mov game_mode, 2
         .elseif (dx == VK_LEFT)
             mov eax, l_move_xlim
-            .if (dino_white.box.pos.X > eax)        ; ¤p®£Às¥ª²¾Ãä¬É
+            .if (dino_white.box.pos.X > eax)        ; å°æé¾å·¦ç§»é‚Šç•Œ
                 mov eax, lr_move
                 sub dino_white.box.pos.X, eax
             .endif
         .elseif (dx == VK_RIGHT)
             mov eax, r_move_xlim
-            .if (dino_white.box.pos.X < eax)        ; ¤p®£Às¥k²¾Ãä¬É
+            .if (dino_white.box.pos.X < eax)        ; å°æé¾å³ç§»é‚Šç•Œ
                 mov eax, lr_move
                 add dino_white.box.pos.X, eax
             .endif
         .endif
-            
+        ; ------------------------------------------
+        
+        ; ------------------------------------------
         .if (dx == VK_DOWN)
-            mov eax, ylim                           ; ­n¦b¦aªO¤~¯àÃÛ
+            mov eax, ylim                           ; è¦åœ¨åœ°æ¿æ‰èƒ½è¹²
             .if (dino_white.bowing == 0 && dino_white.box.pos.Y == eax)
                 INVOKE DinoSwitchLift, 1
                 INVOKE DinoSwitchBow, 1
@@ -169,50 +134,91 @@ gaming:
                 call DinoChangeBody
             .endif
         .endif
+        ; ------------------------------------------
 
+        ; ------------------------------------------
         .if (dino_white.jumping != 0)
             mJumpUpdate
-        .elseif (dino_white.lifting != 0)           ; ¨S¦³¸õ®É¡A¤~·|´«¸}¡A¥B¨S¦³©ï¸}¡A´N¤£·|´«¸}¡C
+        .elseif (dino_white.lifting != 0)           ; æ²’æœ‰è·³æ™‚ï¼Œæ‰æœƒæ›è…³ï¼Œä¸”æ²’æœ‰æŠ¬è…³ï¼Œå°±ä¸æœƒæ›è…³ã€‚
             mLiftUpdate
         .endif
+        ; ------------------------------------------
 
-        .if (cactus2_green.exists == 0)             ; ¥P¤H´x¥¼¥X²{
-            .if (debut_req_frame == 0)              ; ©|¥¼¦³¥X²{©Ò»İ´V¼Æ
-                mov eax, rand_add_frame
-                call RandomRange
-                add eax, initial_frame              ; ¥X²{©Ò»İ´V¼Æ = ¥X²{³Ì¤Ö©Ò»İ´V¼Æ + ÀH¾÷¥[½X´V¼Æ
-                mov debut_req_frame, eax
-            .else                                   ; ¦³ÀH¾÷ÅÜ¼Æ
+        ; ------------------------------------------
+        .if (enemy_exists == 0)                         ; ç•«é¢ä¸­æ˜¯å¦æœ‰æ•µäºº
+            .if (enemy_type == 0)                       ; å¦‚æœå°šæœªæ±ºå®šæ•µäººé¡å‹
+                mov eax, 2
+                call RandomRange                       ; éš¨æ©Ÿé¸æ“‡æ•µäººé¡å‹: 1 æˆ– 2
+                add eax, 1
+                mov enemy_type, eax
+                INVOKE RandomChooseEnemy, enemy_type    ; éš¨æ©Ÿé¸æ“‡æ•µäºº (å›å‚³ current_enemy)
+                mGetDebutFrame
+            .else
                 dec debut_req_frame
-                .if (debut_req_frame == 0)          ; ¤wµ¥«İ§¹²¦
-                     mov cactus2_green.exists, 1
+                .if (debut_req_frame == 0)
+                    mov enemy_exists, 1
                 .endif
             .endif
-        .else                                       ; ¥P¤H´x¤w¥X²{¡AÀË´ú¸I¼²
-            INVOKE DetectCollision, ADDR cactus2_green.box, ADDR dino_white.box
-            .if (edx == 1)                          ; ¦³¸I¼²¡I
-                mov game_mode, 3                    ; ¹CÀ¸§ï¬°µ²§ô¼Ò¦¡
-                mCactusReset
-                mHighScoreUpdate
-            .else                                   ; ¨S¦³¸I¼²¡I
-                .if (cactus2_green.box.pos.X <= 1)  ; ·í¥P¤H´x¤w©è¹FÃä¬É
-                    mCactusReset
-                .else                               ; ·í¥P¤H´x¥¼©è¹FÃä¬É
-                    mov eax, cactus_move
-                    sub cactus2_green.box.pos.X, eax
+        .else                             
+            mov esi, current_enemy                      ; # æ•µäººå·²å‡ºç¾ï¼Œæª¢æ¸¬ç¢°æ’
+
+            .if (enemy_type == 1)                       ; éœæ…‹æ•µäºº
+                lea edi, (STATIC_ENEMY PTR [esi]).box
+                INVOKE DetectCollision, edi, ADDR dino_white.box
+                .if (edx == 1)                          ; æœ‰ç¢°æ’ï¼
+                    mov game_mode, 3                    ; éŠæˆ²æ”¹ç‚ºçµæŸæ¨¡å¼
+                    INVOKE BoxSetPos, edi, static_gen_x, static_gen_y
+                    mov enemy_exists, 0                 ; ç•«é¢ä¸å­˜åœ¨æ•µäºº
+                    mov enemy_type, 0                   ; ç•«é¢æ•µäººå°šæœªæ±ºå®š
+                    mHighScoreUpdate
+                .else                                   ; æ²’æœ‰ç¢°æ’ï¼
+                    mov eax, (BOX PTR [edi]).pos.X
+                    .if (eax <= 1)                      ; éœæ…‹æ•µäººå·²æŠµé”é‚Šç•Œ
+                        INVOKE BoxSetPos, edi, static_gen_x, static_gen_y
+                        mov enemy_exists, 0             ; ç•«é¢ä¸å­˜åœ¨æ•µäºº
+                        mov enemy_type, 0               ; ç•«é¢æ•µäººå°šæœªæ±ºå®š
+                    .else                               ; éœæ…‹æ•µäººæœªæŠµé”é‚Šç•Œ
+                        mov eax, static_move
+                        sub (BOX PTR [edi]).pos.X, eax
+                    .endif
                 .endif
+
+            .elseif (enemy_type == 2)
+                lea edi, (DYNAMIC_ENEMY PTR [esi]).box  ; å‹•æ…‹æ•µäºº
+                mDynamicEnemyUpdate                     ; å‹•æ…‹æ•µäººç‹€æ…‹æ›´æ–°
+                INVOKE DetectCollision, edi, ADDR dino_white.box
+                .if (edx == 1)                          ; æœ‰ç¢°æ’ï¼
+                    mov game_mode, 3                    ; éŠæˆ²æ”¹ç‚ºçµæŸæ¨¡å¼
+                    INVOKE BoxSetPos, edi, dynamic_gen_x, dynamic_gen_y
+                    mov enemy_exists, 0                 ; ç•«é¢ä¸å­˜åœ¨æ•µäºº
+                    mov enemy_type, 0                   ; ç•«é¢æ•µäººå°šæœªæ±ºå®š
+                    mHighScoreUpdate
+                .else                                   ; æ²’æœ‰ç¢°æ’ï¼
+                    mov eax, (BOX PTR [edi]).pos.X
+                    .if (eax <= 1)                      ; å‹•æ…‹æ•µäººå·²æŠµé”é‚Šç•Œ
+                        INVOKE BoxSetPos, edi, dynamic_gen_x, dynamic_gen_y
+                        mov enemy_exists, 0             ; ç•«é¢ä¸å­˜åœ¨æ•µäºº
+                        mov enemy_type, 0               ; ç•«é¢æ•µäººå°šæœªæ±ºå®š
+                    .else                               ; å‹•æ…‹æ•µäººæœªæŠµé”é‚Šç•Œ
+                        mov eax, static_move
+                        sub (BOX PTR [edi]).pos.X, eax
+                    .endif
+                .endif
+
             .endif
+
         .endif
+        ; ------------------------------------------
 
 game_stoped:
-    .elseif (game_mode == 2)                        ; @ ¹CÀ¸¤w¼È°±
-        .if (dx == VK_SPACE)                        ; «öªÅ¥ÕÁä¡uÄ~Äò¡v¹CÀ¸
+    .elseif (game_mode == 2)                        ; @ éŠæˆ²å·²æš«åœ
+        .if (dx == VK_SPACE)                        ; æŒ‰ç©ºç™½éµã€Œç¹¼çºŒã€éŠæˆ²
             mov game_mode, 1
         .endif
 
 game_overed:
-    .elseif (game_mode == 3)                        ; @ ¹CÀ¸¤wµ²§ô
-        .if (dx == VK_SPACE)                        ; «öªÅ¥ÕÁä¡u¶}©l¡v¹CÀ¸
+    .elseif (game_mode == 3)                        ; @ éŠæˆ²å·²çµæŸ
+        .if (dx == VK_SPACE)                        ; æŒ‰ç©ºç™½éµã€Œé–‹å§‹ã€éŠæˆ²
             mov game_mode, 1
             mGameInit
         .endif
@@ -223,23 +229,61 @@ draw:
     call Clrscr
 
     INVOKE DrawBox, dino_white.box
+
+    .if (enemy_exists == 1)
+        mov esi, current_enemy
+        .if (enemy_type == 1)
+            INVOKE DrawBox, (STATIC_ENEMY PTR [esi]).box
+        .elseif (enemy_type == 2)
+            INVOKE DrawBox, (DYNAMIC_ENEMY PTR [esi]).box
+        .endif
+    .endif
+
     INVOKE DrawBox, score_str.box
     INVOKE DrawBox, high_score_str.box
     INVOKE DrawScore, score, last_digit_x, score_y
     INVOKE DrawScore, high_score, last_digit_x, high_score_y
 
-    .if (game_mode == 0 || game_mode == 2)          ; @ ¹CÀ¸¥¼¶}©l / @ ¹CÀ¸¤w¼È°±
+    .if (game_mode == 0 || game_mode == 2)          ; @ éŠæˆ²æœªé–‹å§‹ / @ éŠæˆ²å·²æš«åœ
         INVOKE DrawBox, game_start_str.box
-    .elseif (game_mode == 3)                        ; @ ¹CÀ¸¤wµ²§ô
+    .elseif (game_mode == 3)                        ; @ éŠæˆ²å·²çµæŸ
         INVOKE DrawBox, game_over_str.box
     .endif
-    .if (cactus2_green.exists == 1)
-        INVOKE DrawBox, cactus2_green.box
-    .endif
+
 
     jmp game_loop
 
     exit
 
 main ENDP
+
+; ----------------------------------
+; Name:
+;     RandomChooseEnemy
+; Brief:
+;     éš¨æ©Ÿé¸æ“‡æ•µäºº
+; Uses:
+;     eax esi
+; Params:
+;     etype = éœæ…‹æ•µäºº: 1, å‹•æ…‹æ•µäºº: 2
+; Returns:
+;     current_enemy = æ•µäººæŒ‡æ¨™ (STATIC_ENEMY PTR || DYNAMIC_ENEMY PTR)
+; Example:
+;     INVOKE RandomChooseEnemy, 1
+; ----------------------------------
+RandomChooseEnemy PROC USES eax esi etype:DWORD
+    call Randomize
+    .if (etype == 1)
+        mov eax, static_num
+        call RandomRange
+        mov esi, static_enemies[eax * TYPE DWORD]
+    .elseif (etype == 2)
+        mov eax, dynamic_num
+        call RandomRange
+        mov esi, dynamic_enemies[eax * TYPE DWORD]
+    .endif
+    mov current_enemy, esi
+    ret
+RandomChooseEnemy ENDP
+
 END main
