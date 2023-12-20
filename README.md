@@ -4,8 +4,9 @@ Last Update: 2023/12/19
 ![alt dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/preview/dino.gif)
 
 ---
-### New Update (for developers)
-+ ...
+### Run Game 
++ 新版 Console：以系統管理員執行 `dino.bat`，執行檔與批次檔需放在同目錄。
++ 舊版 Console：執行 `dino.bat`，執行檔與批次檔需放在同目錄。
 
 ---
 ### Idea
