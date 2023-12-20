@@ -17,45 +17,45 @@ RandomChooseEnemy PROTO etype:DWORD
 ; 遊戲
 xlim            =       575         ; boundary
 ylim            =       127         ; ground
-game_mode       DWORD   0           ; 0: 初始模式, 1: 遊玩模式, 2: 暫停模式, 3 結束模式
-; ---------------------------------------------------------------------------
+game_mode       DWORD   0           ; 遊戲模式 - (0: 未開始 | 1: 遊玩中 | 2: 暫停 | 3 結束)
+; -------------------------------------------------------------------------------
 ; 小恐龍
 lr_move         DWORD   5           ; 小恐龍左右移動速度
 l_move_xlim     DWORD   0           ; 小恐龍左移邊界
-r_move_xlim     DWORD   400         ; 小恐龍右移邊界
+r_move_xlim     DWORD   450         ; 小恐龍右移邊界
 jump_height     DWORD   6           ; 小恐龍上升/下降高度 (每回合)
-jump_times      DWORD   12          ; 小恐龍上升回合
-lift_times      DWORD   3           ; 小恐龍抬腳回合
-; ---------------------------------------------------------------------------
+jump_frame      DWORD   12          ; 小恐龍上升回合
+lift_frame      DWORD   3           ; 小恐龍抬腳回合
+; -------------------------------------------------------------------------------
 ; 敵人
 current_enemy   DWORD   ?           ; 當前敵人指標
 enemy_exists    DWORD   0           ; 畫面中是否有敵人
-enemy_type      DWORD   0           ; 當前生成敵人類型 - 尚未決定: 0, 靜態: 1, 動態: 2
-; ---------------------------------------------------------------------------
+enemy_type      DWORD   0           ; 當前生成敵人類型 - (0: 尚未決定 | 1: 靜態 | 2: 動態)
+; -------------------------------------------------------------------------------
 ; 靜態敵人
 static_move     DWORD   10          ; 靜態敵人向左移動速度
-static_gen_x    DWORD   400         ; 靜態敵人重置位置 (x 座標)
+static_gen_x    DWORD   450         ; 靜態敵人重置位置 (x 座標)
 static_gen_y    DWORD   ylim        ; 靜態敵人重置位置 (y 座標)
                                     ; 靜態敵人陣列
 static_enemies  DWORD   OFFSET cactus1_green, OFFSET cactus2_green
                                     ; 靜態敵人數量
 static_num      =       ($ - static_enemies) / TYPE DWORD
-; ---------------------------------------------------------------------------
+; -------------------------------------------------------------------------------
 ; 動態敵人
-status_times    DWORD   3           ; 動態敵人狀態更新回合
-dynamic_move    DWORD   20          ; 動態敵人向左移動
-dynamic_gen_x   DWORD   400         ; 動態敵人重置位置 (x 座標)
+status_frame    DWORD   3           ; 動態敵人狀態更新回合
+dynamic_move    DWORD   13          ; 動態敵人向左移動速度
+dynamic_gen_x   DWORD   450         ; 動態敵人重置位置 (x 座標)
 dynamic_gen_y   DWORD   ylim - 30   ; 動態敵人重置位置 (y 座標)
                                     ; 動態敵人陣列
 dynamic_enemies DWORD   OFFSET bird1_brown
                                     ; 動態敵人數量
 dynamic_num     =       ($ - dynamic_enemies) / TYPE DWORD
-; ---------------------------------------------------------------------------
+; -------------------------------------------------------------------------------
 ; 隨機
-initial_frame   DWORD   5           ; 出現最少所需幀數
-rand_add_frame  DWORD   20          ; 隨機加碼幀數 (0 ~ 30 frames)
+initial_frame   DWORD   3           ; 出現最少所需幀數
+rand_add_frame  DWORD   10          ; 隨機加碼幀數 (0 ~ 30 frames)
 debut_req_frame DWORD   0           ; 出現所需幀數
-; ---------------------------------------------------------------------------
+; -------------------------------------------------------------------------------
 ; 計分
 score           DWORD   0           ; 目前分數 (7位數)
 high_score      DWORD   0           ; 歷史最高分數 (7位數)
@@ -69,9 +69,7 @@ main PROC
 
     call OutputInit
 
-    INVOKE BoxSetPos, ADDR     dino_white.box, 20, ylim
-    INVOKE BoxSetPos, ADDR  cactus1_green.box, static_gen_x, static_gen_y
-    INVOKE BoxSetPos, ADDR  cactus2_green.box, static_gen_x, static_gen_y
+    mCharacterSetPos
     INVOKE BoxSetPos, ADDR  game_over_str.box, 250, 50
     INVOKE BoxSetPos, ADDR game_start_str.box, 180, 50
     INVOKE BoxSetPos, ADDR      score_str.box, 400, score_y
@@ -82,41 +80,38 @@ main PROC
 game_loop:
 
 read_key:
-    INVOKE Sleep, 20                                ; sleep，讓 OS 有時間做 time slicing
-    call ReadKey                                    ; 讀取輸入鍵
+    INVOKE Sleep, 20                                    ; sleep，讓 OS 有時間做 time slicing
+    call ReadKey                                        ; 讀取輸入鍵
 
 game_not_started_yet:
-    .if (game_mode == 0)                            ; @ 遊戲未開始
-        .if (dx == VK_SPACE)                        ; 按空白鍵「開始」遊戲
+    .if (game_mode == 0)                                ; @ 遊戲未開始
+        .if (dx == VK_SPACE)                            ; 按空白鍵「開始」遊戲
             mov game_mode, 1
             mGameInit
         .endif
 
 gaming:
-    .elseif (game_mode == 1)                        ; @ 遊戲進行中
-        inc score                                   ; 每幀 +1 分
-
-        ; ------------------------------------------
-        .if (dx == VK_ESCAPE)                       ; 暫停遊戲
+    .elseif (game_mode == 1)                            ; @ 遊戲進行中
+        inc score                                       ; 每幀 +1 分
+        ; ----------------------------------------------
+        .if (dx == VK_ESCAPE)                           ; 暫停遊戲
             mov game_mode, 2
         .elseif (dx == VK_LEFT)
             mov eax, l_move_xlim
-            .if (dino_white.box.pos.X > eax)        ; 小恐龍左移邊界
+            .if (dino_white.box.pos.X > eax)            ; 小恐龍左移邊界
                 mov eax, lr_move
                 sub dino_white.box.pos.X, eax
             .endif
         .elseif (dx == VK_RIGHT)
             mov eax, r_move_xlim
-            .if (dino_white.box.pos.X < eax)        ; 小恐龍右移邊界
+            .if (dino_white.box.pos.X < eax)            ; 小恐龍右移邊界
                 mov eax, lr_move
                 add dino_white.box.pos.X, eax
             .endif
         .endif
-        ; ------------------------------------------
-        
-        ; ------------------------------------------
+        ; ----------------------------------------------
         .if (dx == VK_DOWN)
-            mov eax, ylim                           ; 要在地板才能蹲
+            mov eax, ylim                               ; 要在地板才能蹲
             .if (dino_white.bowing == 0 && dino_white.box.pos.Y == eax)
                 INVOKE DinoSwitchLift, 1
                 INVOKE DinoSwitchBow, 1
@@ -134,21 +129,17 @@ gaming:
                 call DinoChangeBody
             .endif
         .endif
-        ; ------------------------------------------
-
-        ; ------------------------------------------
+        ; ----------------------------------------------
         .if (dino_white.jumping != 0)
             mJumpUpdate
-        .elseif (dino_white.lifting != 0)           ; 沒有跳時，才會換腳，且沒有抬腳，就不會換腳。
+        .elseif (dino_white.lifting != 0)               ; 沒有跳時，才會換腳，且沒有抬腳，就不會換腳。
             mLiftUpdate
         .endif
-        ; ------------------------------------------
-
-        ; ------------------------------------------
-        .if (enemy_exists == 0)                         ; 畫面中是否有敵人
+        ; ----------------------------------------------
+        .if (enemy_exists == 0)                         ; # 敵人未出現
             .if (enemy_type == 0)                       ; 如果尚未決定敵人類型
                 mov eax, 2
-                call RandomRange                       ; 隨機選擇敵人類型: 1 或 2
+                call RandomRange                        ; 隨機選擇敵人類型: 1 或 2
                 add eax, 1
                 mov enemy_type, eax
                 INVOKE RandomChooseEnemy, enemy_type    ; 隨機選擇敵人 (回傳 current_enemy)
@@ -159,66 +150,60 @@ gaming:
                     mov enemy_exists, 1
                 .endif
             .endif
-        .else                             
-            mov esi, current_enemy                      ; # 敵人已出現，檢測碰撞
-
+        .else                                           ; # 敵人已出現，檢測碰撞
+            mov esi, current_enemy                      
             .if (enemy_type == 1)                       ; 靜態敵人
                 lea edi, (STATIC_ENEMY PTR [esi]).box
                 INVOKE DetectCollision, edi, ADDR dino_white.box
                 .if (edx == 1)                          ; 有碰撞！
                     mov game_mode, 3                    ; 遊戲改為結束模式
-                    INVOKE BoxSetPos, edi, static_gen_x, static_gen_y
                     mov enemy_exists, 0                 ; 畫面不存在敵人
                     mov enemy_type, 0                   ; 畫面敵人尚未決定
                     mHighScoreUpdate
                 .else                                   ; 沒有碰撞！
                     mov eax, (BOX PTR [edi]).pos.X
-                    .if (eax <= 1)                      ; 靜態敵人已抵達邊界
+                    sub eax, static_move
+                    .if (eax >= xlim)                   ; 靜態敵人已抵達邊界 (暫存器正負不分，二補數負數會被視為超大正整數)
                         INVOKE BoxSetPos, edi, static_gen_x, static_gen_y
                         mov enemy_exists, 0             ; 畫面不存在敵人
                         mov enemy_type, 0               ; 畫面敵人尚未決定
-                    .else                               ; 靜態敵人未抵達邊界
-                        mov eax, static_move
-                        sub (BOX PTR [edi]).pos.X, eax
+                    .else
+                        mov (BOX PTR [edi]).pos.X, eax
                     .endif
                 .endif
-
-            .elseif (enemy_type == 2)
-                lea edi, (DYNAMIC_ENEMY PTR [esi]).box  ; 動態敵人
-                mDynamicEnemyUpdate                     ; 動態敵人狀態更新
+            .elseif (enemy_type == 2)                   ; 動態敵人
+                lea edi, (DYNAMIC_ENEMY PTR [esi]).box  
                 INVOKE DetectCollision, edi, ADDR dino_white.box
+                mDynamicEnemyUpdate                     ; 動態敵人狀態更新
                 .if (edx == 1)                          ; 有碰撞！
                     mov game_mode, 3                    ; 遊戲改為結束模式
-                    INVOKE BoxSetPos, edi, dynamic_gen_x, dynamic_gen_y
                     mov enemy_exists, 0                 ; 畫面不存在敵人
                     mov enemy_type, 0                   ; 畫面敵人尚未決定
                     mHighScoreUpdate
                 .else                                   ; 沒有碰撞！
                     mov eax, (BOX PTR [edi]).pos.X
-                    .if (eax <= 1)                      ; 動態敵人已抵達邊界
+                    sub eax, dynamic_move
+                    .if (eax >= xlim)                   ; 動態敵人已抵達邊界 (暫存器正負不分，二補數負數會被視為超大正整數)
                         INVOKE BoxSetPos, edi, dynamic_gen_x, dynamic_gen_y
                         mov enemy_exists, 0             ; 畫面不存在敵人
                         mov enemy_type, 0               ; 畫面敵人尚未決定
-                    .else                               ; 動態敵人未抵達邊界
-                        mov eax, static_move
-                        sub (BOX PTR [edi]).pos.X, eax
+                    .else
+                        mov (BOX PTR [edi]).pos.X, eax
                     .endif
                 .endif
-
             .endif
-
         .endif
-        ; ------------------------------------------
+        ; ----------------------------------------------
 
 game_stoped:
-    .elseif (game_mode == 2)                        ; @ 遊戲已暫停
-        .if (dx == VK_SPACE)                        ; 按空白鍵「繼續」遊戲
+    .elseif (game_mode == 2)                            ; @ 遊戲已暫停
+        .if (dx == VK_SPACE)                            ; 按空白鍵「繼續」遊戲
             mov game_mode, 1
         .endif
 
 game_overed:
-    .elseif (game_mode == 3)                        ; @ 遊戲已結束
-        .if (dx == VK_SPACE)                        ; 按空白鍵「開始」遊戲
+    .elseif (game_mode == 3)                            ; @ 遊戲已結束
+        .if (dx == VK_SPACE)                            ; 按空白鍵「開始」遊戲
             mov game_mode, 1
             mGameInit
         .endif
@@ -234,7 +219,7 @@ draw:
         mov esi, current_enemy
         .if (enemy_type == 1)
             INVOKE DrawBox, (STATIC_ENEMY PTR [esi]).box
-        .elseif (enemy_type == 2)
+         .elseif (enemy_type == 2)
             INVOKE DrawBox, (DYNAMIC_ENEMY PTR [esi]).box
         .endif
     .endif
@@ -249,7 +234,6 @@ draw:
     .elseif (game_mode == 3)                        ; @ 遊戲已結束
         INVOKE DrawBox, game_over_str.box
     .endif
-
 
     jmp game_loop
 

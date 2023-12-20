@@ -19,10 +19,17 @@ OPTION casemap:none
 
 ; 巨集的定義：直接放入即可
 
+mCharacterSetPos MACRO
+    INVOKE BoxSetPos, ADDR     dino_white.box,            20,          ylim
+    INVOKE BoxSetPos, ADDR  cactus1_green.box,  static_gen_x,  static_gen_y
+    INVOKE BoxSetPos, ADDR  cactus2_green.box,  static_gen_x,  static_gen_y
+    INVOKE BoxSetPos, ADDR    bird1_brown.box, dynamic_gen_x, dynamic_gen_y
+ENDM
+
 ; 遊戲重設
 mGameInit MACRO
+    mCharacterSetPos                                ; 位置重置
     mov score, 0                                    ; 分數重置
-    INVOKE BoxSetPos, ADDR dino_white.box, 20, ylim ; 小恐龍座標重置
     INVOKE DinoSwitchJump, 0                        ; 小恐龍跳躍狀態重置
     INVOKE DinoSwitchLift, 1                        ; 小恐龍抬腳狀態重置 (抬左腳)
 ENDM
@@ -31,7 +38,7 @@ ENDM
 mJumpUpdate MACRO
     mov ecx, dino_white.jump_counter
     .if (dino_white.jumping == 1)
-        .if (ecx == jump_times)
+        .if (ecx == jump_frame)
             INVOKE DinoSwitchJump, 2
         .else
             mov eax, jump_height
@@ -39,7 +46,7 @@ mJumpUpdate MACRO
             inc dino_white.jump_counter
         .endif
     .elseif (dino_white.jumping == 2)
-        .if (ecx == jump_times)
+        .if (ecx == jump_frame)
             INVOKE DinoSwitchJump, 0
             INVOKE DinoSwitchLift, 2                ; 右腳著地
             call DinoChangeBody
@@ -54,7 +61,7 @@ ENDM
 ; 抬腳更新
 mLiftUpdate MACRO
     mov ecx, dino_white.lift_counter
-    .if (ecx == lift_times)
+    .if (ecx == lift_frame)
         .if (dino_white.lifting == 1)
             INVOKE DinoSwitchLift, 2
             call DinoChangeBody
@@ -70,7 +77,7 @@ ENDM
 ; 動態敵人更新
 mDynamicEnemyUpdate MACRO
     mov ecx, (DYNAMIC_ENEMY PTR [esi]).status_counter
-    .if (ecx == status_times)
+    .if (ecx == status_frame)
         mov (DYNAMIC_ENEMY PTR [esi]).status_counter, 0
         INVOKE DynamicEnemyChangeBody, current_enemy
     .else
