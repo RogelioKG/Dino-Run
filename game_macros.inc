@@ -19,11 +19,31 @@ OPTION casemap:none
 
 ; 巨集的定義：直接放入即可
 
+
+
+; 文字位置重設 (置中位置: 272.5)
+mTextSetPos MACRO
+    INVOKE BoxSetPos, ADDR      game_name_str.box, 240, 50
+    INVOKE BoxSetPos, ADDR     game_start_str.box, 180, 90
+    INVOKE BoxSetPos, ADDR   game_restart_str.box, 180, 50
+    INVOKE BoxSetPos, ADDR      game_over_str.box, 250, 50
+
+    INVOKE BoxSetPos, ADDR     hint_space_str.box, 199, 65
+    INVOKE BoxSetPos, ADDR hint_rightleft_str.box, 177, 80
+    INVOKE BoxSetPos, ADDR      hint_down_str.box, 203, 95
+    INVOKE BoxSetPos, ADDR       hint_esc_str.box, 206, 110
+
+    INVOKE BoxSetPos, ADDR          score_str.box, 400, score_y
+    INVOKE BoxSetPos, ADDR     high_score_str.box, 364, high_score_y
+ENDM
+
+; 角色位置重設
 mCharacterSetPos MACRO
     INVOKE BoxSetPos, ADDR     dino_white.box,            20,          ylim
     INVOKE BoxSetPos, ADDR  cactus1_green.box,  static_gen_x,  static_gen_y
     INVOKE BoxSetPos, ADDR  cactus2_green.box,  static_gen_x,  static_gen_y
     INVOKE BoxSetPos, ADDR    bird1_brown.box, dynamic_gen_x, dynamic_gen_y
+    INVOKE BoxSetPos, ADDR     ufo1_blue.box,  dynamic_gen_x, dynamic_gen_y
 ENDM
 
 ; 遊戲重設
@@ -32,6 +52,33 @@ mGameInit MACRO
     mov score, 0                                    ; 分數重置
     INVOKE DinoSwitchJump, 0                        ; 小恐龍跳躍狀態重置
     INVOKE DinoSwitchLift, 1                        ; 小恐龍抬腳狀態重置 (抬左腳)
+ENDM
+
+; 改變難度
+mChangeDifficulty MACRO
+    .if (score == 1)            ; 重置
+        mov static_move, 10     ; 靜態敵人向左移動速度
+        mov status_frame, 3     ; 動態敵人狀態更新回合
+        mov dynamic_move, 13    ; 動態敵人向左移動速度
+        mov initial_frame, 3    ; 出現最少所需幀數
+        mov rand_add_frame, 10   ; 隨機加碼幀數
+        INVOKE ChangeColor, ADDR cactus1_green.box, lightGreen
+        INVOKE ChangeColor, ADDR cactus2_green.box, green
+    .elseif (score == 500)
+        mov static_move, 12
+        mov status_frame, 2
+        mov dynamic_move, 15
+        mov initial_frame, 2
+        mov rand_add_frame, 8
+    .elseif (score == 1000)
+        mov static_move, 14
+        mov status_frame, 1
+        mov dynamic_move, 17
+        mov initial_frame, 1
+        mov rand_add_frame, 6
+        INVOKE ChangeColor, ADDR cactus1_green.box, lightRed
+        INVOKE ChangeColor, ADDR cactus2_green.box, red
+    .endif
 ENDM
 
 ; 跳躍更新
@@ -77,7 +124,7 @@ ENDM
 ; 動態敵人更新
 mDynamicEnemyUpdate MACRO
     mov ecx, (DYNAMIC_ENEMY PTR [esi]).status_counter
-    .if (ecx == status_frame)
+    .if (ecx >= status_frame)
         mov (DYNAMIC_ENEMY PTR [esi]).status_counter, 0
         INVOKE DynamicEnemyChangeBody, current_enemy
     .else
@@ -85,7 +132,7 @@ mDynamicEnemyUpdate MACRO
     .endif
 ENDM
 
-; 最高分更新
+; 歷史高分更新
 mHighScoreUpdate MACRO
     mov eax, score
     .if (eax > high_score)                          

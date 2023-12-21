@@ -17,7 +17,8 @@ RandomChooseEnemy PROTO etype:DWORD
 ; 遊戲
 xlim            =       575         ; boundary
 ylim            =       127         ; ground
-game_mode       DWORD   0           ; 遊戲模式 - (0: 未開始 | 1: 遊玩中 | 2: 暫停 | 3 結束)
+game_mode       DWORD   0           ; 遊戲模式 - (0: 未開始 | 1: 遊玩中 | 2: 暫停 | 3 結束 | 4: 說明)
+countdown       DWORD   100         ; 說明模式倒計時 (給遊玩者時間看說明)
 ; -------------------------------------------------------------------------------
 ; 小恐龍
 lr_move         DWORD   5           ; 小恐龍左右移動速度
@@ -33,7 +34,7 @@ enemy_exists    DWORD   0           ; 畫面中是否有敵人
 enemy_type      DWORD   0           ; 當前生成敵人類型 - (0: 尚未決定 | 1: 靜態 | 2: 動態)
 ; -------------------------------------------------------------------------------
 ; 靜態敵人
-static_move     DWORD   10          ; 靜態敵人向左移動速度
+static_move     DWORD   10          ; 靜態敵人向左移動速度 (難度)
 static_gen_x    DWORD   450         ; 靜態敵人重置位置 (x 座標)
 static_gen_y    DWORD   ylim        ; 靜態敵人重置位置 (y 座標)
                                     ; 靜態敵人陣列
@@ -42,23 +43,24 @@ static_enemies  DWORD   OFFSET cactus1_green, OFFSET cactus2_green
 static_num      =       ($ - static_enemies) / TYPE DWORD
 ; -------------------------------------------------------------------------------
 ; 動態敵人
-status_frame    DWORD   3           ; 動態敵人狀態更新回合
-dynamic_move    DWORD   13          ; 動態敵人向左移動速度
+status_frame    DWORD   3           ; 動態敵人狀態更新回合 (難度)
+dynamic_move    DWORD   13          ; 動態敵人向左移動速度 (難度)
 dynamic_gen_x   DWORD   450         ; 動態敵人重置位置 (x 座標)
 dynamic_gen_y   DWORD   ylim - 30   ; 動態敵人重置位置 (y 座標)
                                     ; 動態敵人陣列
-dynamic_enemies DWORD   OFFSET bird1_brown
+dynamic_enemies DWORD   OFFSET bird1_brown, OFFSET ufo1_blue
                                     ; 動態敵人數量
 dynamic_num     =       ($ - dynamic_enemies) / TYPE DWORD
 ; -------------------------------------------------------------------------------
 ; 隨機
-initial_frame   DWORD   3           ; 出現最少所需幀數
-rand_add_frame  DWORD   10          ; 隨機加碼幀數 (0 ~ 30 frames)
+initial_frame   DWORD   3           ; 出現最少所需幀數 (難度)
+rand_add_frame  DWORD   10          ; 隨機加碼幀數 (難度)
 debut_req_frame DWORD   0           ; 出現所需幀數
 ; -------------------------------------------------------------------------------
 ; 計分
 score           DWORD   0           ; 目前分數 (7位數)
 high_score      DWORD   0           ; 歷史最高分數 (7位數)
+max_score       DWORD   9999999     ; 分數上限
 last_digit_x    DWORD   520         ; score 與 high_score 的 X 座標 (個位數左下角)
 score_y         DWORD   30          ; score 的 Y 座標
 high_score_y    DWORD   20          ; high_score 的 Y 座標
@@ -69,12 +71,9 @@ main PROC
 
     call OutputInit
 
+    mTextSetPos
     mCharacterSetPos
-    INVOKE BoxSetPos, ADDR  game_over_str.box, 250, 50
-    INVOKE BoxSetPos, ADDR game_start_str.box, 180, 50
-    INVOKE BoxSetPos, ADDR      score_str.box, 400, score_y
-    INVOKE BoxSetPos, ADDR high_score_str.box, 364, high_score_y
-
+    
     jmp draw
 
 game_loop:
@@ -86,14 +85,22 @@ read_key:
 game_not_started_yet:
     .if (game_mode == 0)                                ; @ 遊戲未開始
         .if (dx == VK_SPACE)                            ; 按空白鍵「開始」遊戲
-            mov game_mode, 1
+            mov game_mode, 4                            ; 進入遊戲說明
             mGameInit
         .endif
 
 gaming:
     .elseif (game_mode == 1)                            ; @ 遊戲進行中
+
+        ; ----------------------------------------------; # 難度
         inc score                                       ; 每幀 +1 分
-        ; ----------------------------------------------
+        mov eax, score
+        .if (eax == max_score)
+            mov game_mode, 3 
+        .else
+            mChangeDifficulty
+        .endif
+        ; ----------------------------------------------; # 移動與暫停
         .if (dx == VK_ESCAPE)                           ; 暫停遊戲
             mov game_mode, 2
         .elseif (dx == VK_LEFT)
@@ -109,7 +116,7 @@ gaming:
                 add dino_white.box.pos.X, eax
             .endif
         .endif
-        ; ----------------------------------------------
+        ; ----------------------------------------------; # 蹲與跳
         .if (dx == VK_DOWN)
             mov eax, ylim                               ; 要在地板才能蹲
             .if (dino_white.bowing == 0 && dino_white.box.pos.Y == eax)
@@ -129,14 +136,14 @@ gaming:
                 call DinoChangeBody
             .endif
         .endif
-        ; ----------------------------------------------
+        ; ----------------------------------------------; # 小恐龍狀態更新
         .if (dino_white.jumping != 0)
             mJumpUpdate
         .elseif (dino_white.lifting != 0)               ; 沒有跳時，才會換腳，且沒有抬腳，就不會換腳。
             mLiftUpdate
         .endif
-        ; ----------------------------------------------
-        .if (enemy_exists == 0)                         ; # 敵人未出現
+        ; ----------------------------------------------; # 敵人生成與碰撞檢測
+        .if (enemy_exists == 0)                         ; 敵人未出現
             .if (enemy_type == 0)                       ; 如果尚未決定敵人類型
                 mov eax, 2
                 call RandomRange                        ; 隨機選擇敵人類型: 1 或 2
@@ -150,7 +157,7 @@ gaming:
                     mov enemy_exists, 1
                 .endif
             .endif
-        .else                                           ; # 敵人已出現，檢測碰撞
+        .else                                           ; 敵人已出現，檢測碰撞
             mov esi, current_enemy                      
             .if (enemy_type == 1)                       ; 靜態敵人
                 lea edi, (STATIC_ENEMY PTR [esi]).box
@@ -208,6 +215,13 @@ game_overed:
             mGameInit
         .endif
 
+game_instruction:
+    .elseif (game_mode == 4)                            ; @ 遊戲說明
+        mLiftUpdate
+        dec countdown                                   ; 給遊玩者時間看說明
+        .if (countdown == 0)
+            mov game_mode, 1
+        .endif
     .endif
 
 draw:
@@ -224,15 +238,25 @@ draw:
         .endif
     .endif
 
-    INVOKE DrawBox, score_str.box
-    INVOKE DrawBox, high_score_str.box
-    INVOKE DrawScore, score, last_digit_x, score_y
-    INVOKE DrawScore, high_score, last_digit_x, high_score_y
+    .if (game_mode != 0)                            ; @ 遊戲非未開始
+        INVOKE DrawBox, score_str.box
+        INVOKE DrawBox, high_score_str.box
+        INVOKE DrawScore, score, last_digit_x, score_y
+        INVOKE DrawScore, high_score, last_digit_x, high_score_y
+    .endif
 
-    .if (game_mode == 0 || game_mode == 2)          ; @ 遊戲未開始 / @ 遊戲已暫停
+    .if (game_mode == 0)                            ; @ 遊戲未開始
+        INVOKE DrawBox, game_name_str 
         INVOKE DrawBox, game_start_str.box
+    .elseif (game_mode == 2)                        ; @ 遊戲已暫停
+        INVOKE DrawBox, game_restart_str.box
     .elseif (game_mode == 3)                        ; @ 遊戲已結束
         INVOKE DrawBox, game_over_str.box
+    .elseif (game_mode == 4)                        ; @ 遊戲說明
+        INVOKE DrawBox, hint_space_str.box
+        INVOKE DrawBox, hint_rightleft_str.box
+        INVOKE DrawBox, hint_down_str.box
+        INVOKE DrawBox, hint_esc_str.box
     .endif
 
     jmp game_loop
