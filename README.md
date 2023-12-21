@@ -1,5 +1,5 @@
 # Dino-Run-Beta
-Last Update: 2023/12/19
+Last Update: 2023/12/21
 
 ![alt dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/preview/dino.gif)
 
