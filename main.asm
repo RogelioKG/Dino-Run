@@ -123,11 +123,11 @@ gaming:
                 INVOKE DinoSwitchLift, 1
                 INVOKE DinoSwitchBow, 1
                 call DinoChangeBody
+            .elseif (dino_white.bowing == 1)
+                INVOKE DinoSwitchLift, 1
+                INVOKE DinoSwitchBow, 0
+                call DinoChangeBody
             .endif
-        .elseif (dino_white.bowing == 1)
-            INVOKE DinoSwitchLift, 1
-            INVOKE DinoSwitchBow, 0
-            call DinoChangeBody
         .elseif (dx == VK_SPACE)
             .if (dino_white.jumping == 0)
                 INVOKE DinoSwitchJump, 1
