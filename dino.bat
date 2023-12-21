@@ -3,7 +3,7 @@
 setlocal enableextensions
 setlocal disabledelayedexpansion
 
-set "consoleName=Dino"
+set "consoleName=Dino Run"
 
 (   reg add "HKCU\Console\%consoleName%" /f
     reg add "HKCU\Console\%consoleName%" /f /v "FaceName"         /t "REG_SZ"     /d "Consolas"
