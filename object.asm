@@ -1042,6 +1042,20 @@ DinoChangeBody PROC USES eax
     ret
 DinoChangeBody ENDP
 
+; -------------------------------------------------
+; Name:
+;     DynamicEnemyChangeBody
+; Brief:
+;     動態敵人切換身體
+; Uses:
+;     esi eax ebx
+; Params:
+;     enemy_ptr = 動態敵人指標 (PTR DYNAMIC_ENEMY)
+; Returns:
+;     ...
+; Example:
+;     ...
+; -------------------------------------------------
 DynamicEnemyChangeBody PROC USES esi eax ebx enemy_ptr:PTR DYNAMIC_ENEMY
     mov esi, enemy_ptr
     mov eax, (DYNAMIC_ENEMY PTR [esi]).box.contents_ptr ; 當前內容物指標
@@ -1052,6 +1066,21 @@ DynamicEnemyChangeBody PROC USES esi eax ebx enemy_ptr:PTR DYNAMIC_ENEMY
     ret
 DynamicEnemyChangeBody ENDP
 
+; -------------------------------------------------
+; Name:
+;     ChangeColor
+; Brief:
+;     動態敵人切換身體
+; Uses:
+;     eax ecx edi
+; Params:
+;     box_ptr = 物體盒指標 (PTR BOX)
+;     color   = 顏色      (WORD)
+; Returns:
+;     ...
+; Example:
+;     ...
+; -------------------------------------------------
 ChangeColor PROC USES eax ecx edi box_ptr:PTR BOX, color:WORD
     mov ax, color
     mov esi, box_ptr

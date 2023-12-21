@@ -19,8 +19,6 @@ OPTION casemap:none
 
 ; 巨集的定義：直接放入即可
 
-
-
 ; 文字位置重設 (置中位置: 272.5)
 mTextSetPos MACRO
     INVOKE BoxSetPos, ADDR      game_name_str.box, 240, 50
