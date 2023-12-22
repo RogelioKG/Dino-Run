@@ -21,7 +21,8 @@ OPTION casemap:none
 
 ; 文字位置重設 (置中位置: 272.5)
 mTextSetPos MACRO
-    INVOKE BoxSetPos, ADDR      game_name_str.box, 240, 50
+    INVOKE BoxSetPos, ADDR    game_title1_str.box, 123, 50
+    INVOKE BoxSetPos, ADDR    game_title2_str.box, 305, 50
     INVOKE BoxSetPos, ADDR     game_start_str.box, 180, 90
     INVOKE BoxSetPos, ADDR   game_restart_str.box, 180, 50
     INVOKE BoxSetPos, ADDR      game_over_str.box, 250, 50

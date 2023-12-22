@@ -82,10 +82,16 @@ EXTERNDEF bird1_brown           :DYNAMIC_ENEMY
 EXTERNDEF ufo1_blue             :DYNAMIC_ENEMY
 ; ****************************************
 
-; 遊戲名稱
+; 遊戲名稱1
 ; ****************************************
 ; 物件: 遊戲開始文字
-EXTERNDEF game_name_str         :OBJECT
+EXTERNDEF game_title1_str       :OBJECT
+; ****************************************
+
+; 遊戲名稱2
+; ****************************************
+; 物件: 遊戲開始文字
+EXTERNDEF game_title2_str       :OBJECT
 ; ****************************************
 
 ; 遊戲開始

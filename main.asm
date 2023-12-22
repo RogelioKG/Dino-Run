@@ -246,7 +246,8 @@ draw:
     .endif
 
     .if (game_mode == 0)                            ; @ 遊戲未開始
-        INVOKE DrawBox, game_name_str 
+        INVOKE DrawBox, game_title1_str
+        INVOKE DrawBox, game_title2_str
         INVOKE DrawBox, game_start_str.box
     .elseif (game_mode == 2)                        ; @ 遊戲已暫停
         INVOKE DrawBox, game_restart_str.box
