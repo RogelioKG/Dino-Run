@@ -1,7 +1,7 @@
-IFNDEF CONST_INC
-CONST_INC EQU < 1 >
+IFNDEF GAME_MACROS_INC
+GAME_MACROS_INC EQU < 1 >
 
-TITLE const.inc
+TITLE game_macros.inc
 OPTION casemap:none
 
 
