@@ -1,13 +1,12 @@
 # Dino Run v1.0
+
 Last Update: 2023/12/22
 
 ![alt dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/preview/dino.gif)
 
 ---
 ### Run Game
-> 執行檔與批次檔需放在同目錄，並且須確保使用英文輸入法輸入鍵位。
-+ **執行檔**：`dino-run.exe`
-+ **批次檔**：`dino.bat`
+> 執行檔 `dino-run.exe` 與批次檔 `dino.bat` 需放在同目錄，並且須確保使用英文輸入法輸入鍵位。
 + **新版 Console**：以系統管理員執行 `dino.bat`。
 + **舊版 Console**：執行 `dino.bat`。
 
