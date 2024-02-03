@@ -12,10 +12,10 @@ A replica of the classic Chrome Dino Game implemented in x86 Assembly.
 
 
 ## Run Game
+> [!IMPORTANT]
 > 執行檔 `dino-run.exe` 與批次檔 `dino.bat` 需放在同目錄，並且須確保使用英文輸入法輸入鍵位。
 + **新版 Console**：以系統管理員執行 `dino.bat`。
 + **舊版 Console**：執行 `dino.bat`。
-
 
 ## Keyboard Control
 + **ESC**：暫停遊戲
