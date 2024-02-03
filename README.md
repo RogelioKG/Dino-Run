@@ -1,8 +1,8 @@
 # Dino Run
 <!-- Badges -->
-![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
-![Last Update](https://img.shields.io/badge/Last%20Update-2023/12/22-darkgreen)
-[![Licence](https://img.shields.io/github/license/RogelioKG/Dino-Run?style=flat)](./LICENSE)
+![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
+![Last Update: 2023/12/22](https://img.shields.io/badge/last%20update-2023/12/22-darkgreen)
+[![Licence: MIT](https://img.shields.io/github/license/RogelioKG/Dino-Run?style=flat)](./LICENSE)
 
 
 ## Brief
