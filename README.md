@@ -2,12 +2,13 @@
 <!-- Badges -->
 ![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
 ![Last Update](https://img.shields.io/badge/Last%20Update-2023/12/22-darkgreen)
+[![Licence](https://img.shields.io/github/license/RogelioKG/Dino-Run?style=flat)](./LICENSE)
 
 
 ## Brief
 A replica of the classic Chrome Dino Game implemented in x86 Assembly.
 <!-- GIF -->
-![dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/preview/dino.gif)
+![dino](./preview/dino.gif)
 
 
 ## Run Game
