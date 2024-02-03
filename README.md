@@ -1,25 +1,30 @@
-# Dino Run v1.0
+# Dino Run
+<!-- Badges -->
+![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
+![Last Update](https://img.shields.io/badge/Last%20Update-2023/12/22-darkgreen)
 
-Last Update: 2023/12/22
 
-![alt dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/preview/dino.gif)
+## Brief
+A replica of the classic Chrome Dino Game implemented in x86 Assembly.
+<!-- GIF -->
+![dino](https://raw.githubusercontent.com/RogelioKG/Dino-Run/main/preview/dino.gif)
 
----
-### Run Game
+
+## Run Game
 > 執行檔 `dino-run.exe` 與批次檔 `dino.bat` 需放在同目錄，並且須確保使用英文輸入法輸入鍵位。
 + **新版 Console**：以系統管理員執行 `dino.bat`。
 + **舊版 Console**：執行 `dino.bat`。
 
----
-### Keyboard Control
+
+## Keyboard Control
 + **ESC**：暫停遊戲
 + **LEFT**：向左移動 (連續動作)
 + **RIGHT**：向右移動 (連續動作)
 + **DOWN**：蹲下 (切換動作)
 + **SPACE**：跳躍 (固定動作，但跳躍時可左右移動)
 
----
-### Note
+
+## Note
 + 2023/12/07
     > 嘗試 MASM32 SDK，寫個批次檔進行組譯連結，有成功。小木偶的 [input.asm](https://wanker742126.neocities.org/old/win32asm/w32asm_ch03) 和 [parabola.asm](https://wanker742126.neocities.org/old/win32asm/w32asm_ch04) 自己試著組譯連結後，運作良好。這表示將專案改以 MASM32 SDK 是可行方案，但開發上記憶體/暫存器除錯可能是一大困難。
 + 2023/12/16
