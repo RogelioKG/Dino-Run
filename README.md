@@ -25,4 +25,4 @@ A replica of the classic Chrome Dino Game implemented in x86 Assembly.
 + **SPACE**：跳躍 (固定動作，但跳躍時可左右移動)
 
 ## Change Log
-> You can see some notable changes to this project in [CHANGELOG.md](./CHANGELOG.md).
+> You can see more notable changes to this project in [CHANGELOG.md](./CHANGELOG.md).
